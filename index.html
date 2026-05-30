@@ -93,6 +93,9 @@
   .shared-badge { background:#e8f0e5; color:#4a6741; font-size:0.7rem; padding:2px 8px; border-radius:10px; display:inline-block; margin-bottom:8px; }
   .correo-tag { display:flex; align-items:center; justify-content:space-between; background:var(--warm); padding:8px 12px; border-radius:10px; margin-bottom:8px; font-size:0.82rem; }
   .correo-tag button { background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.9rem; }
+  .risk-banner { display:none; background:#c0392b; color:white; padding:10px 16px; font-size:0.82rem; font-weight:500; text-align:center; line-height:1.5; }
+  .risk-banner.warning { background:#e67e22; }
+  .risk-banner.info { background:#4a6741; }
 </style>
 </head>
 <body>
@@ -113,6 +116,7 @@
 </div>
 
 <div id="appContent" style="display:none">
+  <div class="risk-banner" id="riskBanner"></div>
   <header>
     <h1>🐾 Sora — Diario de Salud</h1>
     <p>Pastor Suizo · MUO · Lomustina</p>
@@ -348,6 +352,7 @@
       }
       await cargarDatos();
       await cargarAccesos();
+      checkRiskBanner();
     }
   }
 
@@ -418,6 +423,49 @@
   };
 
   window.cerrarSesion = async () => { await signOut(auth); };
+
+  function checkRiskBanner() {
+    const banner = document.getElementById('riskBanner');
+    const hoy = new Date();
+    const todayStr = hoy.toISOString().split('T')[0];
+
+    // Define risk periods based on lomustina cycles
+    const ciclos = [
+      // Ciclo 1: días 1-3 (29-31 mayo) → riesgo días 4-14 (1-11 junio)
+      { inicio: '2026-06-01', fin: '2026-06-11', ciclo: 'Ciclo 1' },
+      // Ciclo 2 semana 1: 7 jun → riesgo 8-18 jun
+      { inicio: '2026-06-08', fin: '2026-06-18', ciclo: 'Ciclo 2 sem.1' },
+      // Ciclo 2 semana 2: 14 jun → riesgo 15-25 jun
+      { inicio: '2026-06-15', fin: '2026-06-25', ciclo: 'Ciclo 2 sem.2' },
+      // Ciclo 2 semana 3: 21 jun → riesgo 22 jun - 2 jul
+      { inicio: '2026-06-22', fin: '2026-07-02', ciclo: 'Ciclo 2 sem.3' },
+      // Ciclo 3 dosis 1: 5 jul → riesgo 6-16 jul
+      { inicio: '2026-07-06', fin: '2026-07-16', ciclo: 'Ciclo 3 dosis 1' },
+      // Ciclo 3 dosis 2: 20 jul → riesgo 21-31 jul
+      { inicio: '2026-07-21', fin: '2026-07-31', ciclo: 'Ciclo 3 dosis 2' },
+    ];
+
+    // Check lomustina days (show orange)
+    const lomustinaDays = ['2026-05-29','2026-05-30','2026-05-31','2026-06-07','2026-06-14','2026-06-21','2026-07-05','2026-07-20'];
+    if (lomustinaDays.includes(todayStr)) {
+      banner.style.display = 'block';
+      banner.className = 'risk-banner warning';
+      banner.textContent = '💊 Hoy toca Lomustina — recuerda guantes y tomar temperatura esta noche';
+      return;
+    }
+
+    // Check risk periods
+    const riesgo = ciclos.find(c => todayStr >= c.inicio && todayStr <= c.fin);
+    if (riesgo) {
+      const diasRestantes = Math.ceil((new Date(riesgo.fin) - hoy) / (1000*60*60*24));
+      banner.style.display = 'block';
+      banner.className = 'risk-banner';
+      banner.textContent = '🌡️ Período de riesgo activo (' + riesgo.ciclo + ') — Tomar temperatura mañana y noche · ' + diasRestantes + ' días restantes';
+      return;
+    }
+
+    banner.style.display = 'none';
+  }
 
   window.showTab = (tab, btn) => {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
