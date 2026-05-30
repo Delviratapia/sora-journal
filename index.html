@@ -95,6 +95,7 @@
   <button class="tab active" onclick="showTab('nueva',this)">✏️ Nueva</button>
   <button type="button" class="tab" onclick="showTab('historial',this)">📋 Historial</button>
   <button type="button" class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
+  <button type="button" class="tab" onclick="showTab('citas',this)">🏥 Citas</button>
 </div>
 
 <!-- NUEVA ENTRADA -->
@@ -174,6 +175,14 @@
   </div>
 
   <button class="btn-primary" onclick="guardarEntrada()">💾 Guardar entrada</button>
+  <div style="height:12px"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button type="button" onclick="exportarDatos()" style="padding:12px;background:white;color:#3d2b1f;border:1.5px solid #ddd5c8;border-radius:12px;font-family:DM Sans,sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;">📤 Exportar</button>
+    <label style="padding:12px;background:white;color:#3d2b1f;border:1.5px solid #ddd5c8;border-radius:12px;font-family:DM Sans,sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;text-align:center;text-transform:none;letter-spacing:0;margin:0;display:block;">
+      📥 Importar
+      <input type="file" accept=".json" onchange="importarDatos(this)" style="display:none">
+    </label>
+  </div>
   <div style="height:20px"></div>
 </div>
 
@@ -192,6 +201,25 @@
 <!-- RESUMEN -->
 <div id="resumen" class="tab-content">
   <div id="resumenContent"></div>
+</div>
+
+<!-- CITAS MÉDICAS -->
+<div id="citas" class="tab-content">
+  <div class="card">
+    <div class="card-title"><span>🏥</span> Nueva cita médica</div>
+    <div class="row-2">
+      <div><label>Fecha</label><input type="date" id="citaFecha"></div>
+      <div><label>Hora</label><input type="time" id="citaHora"></div>
+    </div>
+    <label>Veterinario / Especialista</label>
+    <input type="text" id="citaVet" placeholder="ej. Dr. Matiz - MoviTeam Vet">
+    <label>Motivo de la cita</label>
+    <input type="text" id="citaMotivo" placeholder="ej. Control neurólogo, Fenobarbital sérico...">
+    <label>Notas adicionales</label>
+    <textarea id="citaNotas" placeholder="Preguntas que quieres hacer, cosas a mencionar..." style="min-height:60px"></textarea>
+    <button type="button" class="btn-primary" onclick="guardarCita()">💾 Guardar cita</button>
+  </div>
+  <div id="listaCitas"></div>
 </div>
 
 <!-- MODAL FOTO -->
@@ -218,6 +246,7 @@
     btn.classList.add('active');
     if (tab === 'historial') renderHistorial();
     if (tab === 'resumen') renderResumen();
+    if (tab === 'citas') renderCitas();
   }
 
   function checkTemp(val) {
@@ -391,6 +420,123 @@
           <div>👨‍⚕️ <strong style="color:var(--bark)">18 junio</strong> — Control neurólogo</div>
         </div>
       </div>`;
+  }
+
+  let citas = JSON.parse(localStorage.getItem('soraCitas') || '[]');
+
+  function guardarCita() {
+    const fecha = document.getElementById('citaFecha').value;
+    if (!fecha) { alert('Por favor selecciona una fecha'); return; }
+    const cita = {
+      id: Date.now(),
+      fecha,
+      hora: document.getElementById('citaHora').value,
+      vet: document.getElementById('citaVet').value,
+      motivo: document.getElementById('citaMotivo').value,
+      notas: document.getElementById('citaNotas').value,
+      completada: false
+    };
+    citas.push(cita);
+    citas.sort((a,b) => a.fecha.localeCompare(b.fecha));
+    localStorage.setItem('soraCitas', JSON.stringify(citas));
+    document.getElementById('citaFecha').value = '';
+    document.getElementById('citaHora').value = '';
+    document.getElementById('citaVet').value = '';
+    document.getElementById('citaMotivo').value = '';
+    document.getElementById('citaNotas').value = '';
+    renderCitas();
+    const btn = document.querySelector('#citas .btn-primary');
+    btn.textContent = '✅ ¡Guardado!';
+    btn.style.background = '#4a6741';
+    setTimeout(() => { btn.textContent = '💾 Guardar cita'; btn.style.background = ''; }, 2000);
+  }
+
+  function renderCitas() {
+    const container = document.getElementById('listaCitas');
+    if (!container) return;
+    if (citas.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="icon">🏥</div><p>No hay citas programadas.</p></div>';
+      return;
+    }
+    const hoy = new Date().toISOString().split("T")[0];
+    const proximas = citas.filter(c => !c.completada && c.fecha >= hoy);
+    const pasadas = citas.filter(c => c.completada || c.fecha < hoy);
+    let html = '';
+    if (proximas.length > 0) {
+      html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Próximas</div>';
+      html += proximas.map(c => citaCard(c, false)).join('');
+    }
+    if (pasadas.length > 0) {
+      html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Pasadas</div>';
+      html += pasadas.map(c => citaCard(c, true)).join('');
+    }
+    container.innerHTML = html;
+  }
+
+  function citaCard(c, pasada) {
+    const fechaObj = new Date(c.fecha + 'T12:00:00');
+    const fechaStr = fechaObj.toLocaleDateString('es-CO', {weekday:'short',day:'numeric',month:'long'});
+    return '<div class="entry-card" style="opacity:'+( pasada ? '0.65' : '1')+'">'+
+      '<div class="entry-header">'+
+        '<div>'+
+          '<div class="entry-date">'+fechaStr+'</div>'+
+          '<div class="entry-time">'+(c.hora||'')+(c.vet?' · '+c.vet:'')+'</div>'+
+        '</div>'+
+        '<span class="badge '+(pasada?'badge-normal':'badge-leve')+'">'+(pasada?'Pasada':'Próxima')+'</span>'+
+      '</div>'+
+      (c.motivo?'<div style="padding:0 16px 8px;font-size:0.85rem;font-weight:500;color:var(--bark)">'+c.motivo+'</div>':'')+
+      (c.notas?'<div class="entry-notes">"'+c.notas+'"</div>':'')+
+      '<div class="entry-footer">'+
+        '<button type="button" onclick="toggleCita('+c.id+')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:DM Sans,sans-serif;">'+(c.completada?'↩️ Reabrir':'✅ Completada')+'</button>'+
+        '<button type="button" class="btn-delete" onclick="eliminarCita('+c.id+')">🗑 Eliminar</button>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function toggleCita(id) {
+    citas = citas.map(c => c.id === id ? {...c, completada: !c.completada} : c);
+    localStorage.setItem('soraCitas', JSON.stringify(citas));
+    renderCitas();
+  }
+
+  function eliminarCita(id) {
+    if (!confirm('¿Eliminar esta cita?')) return;
+    citas = citas.filter(c => c.id !== id);
+    localStorage.setItem('soraCitas', JSON.stringify(citas));
+    renderCitas();
+  }
+
+  function exportarDatos() {
+    const data = JSON.stringify({entries: JSON.parse(localStorage.getItem('soraEntries') || '[]'), citas: JSON.parse(localStorage.getItem('soraCitas') || '[]')});
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sora-respaldo-' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importarDatos(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (Array.isArray(data)) {
+          localStorage.setItem('soraEntries', JSON.stringify(data));
+          entries = data;
+          alert('✅ ' + data.length + ' entradas importadas');
+        } else if (data.entries) {
+          localStorage.setItem('soraEntries', JSON.stringify(data.entries));
+          entries = data.entries;
+          if (data.citas) { localStorage.setItem('soraCitas', JSON.stringify(data.citas)); citas = data.citas; }
+          alert('✅ ' + data.entries.length + ' entradas y ' + (data.citas||[]).length + ' citas importadas');
+        } else { alert('Archivo no válido'); return; }
+      } catch { alert('Error al leer el archivo'); }
+    };
+    reader.readAsText(file);
   }
 
   function openModal(src) {
