@@ -499,9 +499,38 @@
   let symptomDetails = {};
 
   window.toggleSymptom = (btn) => {
-    btn.classList.toggle('selected');
     const key = btn.dataset.key;
     const txt = btn.textContent.trim();
+    const isSelected = btn.classList.contains('selected');
+
+    // If clicking "Sin síntomas" and there are other symptoms selected
+    if (key === 'sin_sintomas' && !isSelected && selectedSymptoms.length > 0) {
+      const hasDetails = Object.values(symptomDetails).some(v => v && v.trim() !== '');
+      const msg = hasDetails
+        ? '¿Deseleccionar todos los síntomas? Perderás los detalles que escribiste.'
+        : '¿Deseleccionar todos los síntomas seleccionados?';
+      if (!confirm(msg)) return;
+      // Deselect all others
+      document.querySelectorAll('.symptom-btn.selected').forEach(b => b.classList.remove('selected'));
+      selectedSymptoms = [];
+      symptomDetails = {};
+      btn.classList.add('selected');
+      selectedSymptoms.push(txt);
+      renderSymptomDetails();
+      return;
+    }
+
+    // If clicking a symptom when "Sin síntomas" is selected → deselect it silently
+    if (key !== 'sin_sintomas' && !isSelected) {
+      const sinBtn = document.querySelector('.symptom-btn[data-key="sin_sintomas"]');
+      if (sinBtn && sinBtn.classList.contains('selected')) {
+        sinBtn.classList.remove('selected');
+        selectedSymptoms = selectedSymptoms.filter(s => !s.includes('Sin síntomas'));
+        delete symptomDetails['sin_sintomas'];
+      }
+    }
+
+    btn.classList.toggle('selected');
     if (btn.classList.contains('selected')) {
       selectedSymptoms.push(txt);
       symptomDetails[key] = '';
