@@ -151,16 +151,29 @@
         <option>Ciclo 2 - Semana 1 (7 jun)</option>
         <option>Ciclo 2 - Semana 2 (14 jun)</option>
         <option>Ciclo 2 - Semana 3 (21 jun)</option>
-        <option>Sin lomustina ese día</option>
         <option>Día de monitoreo</option>
       </select>
     </div>
 
     <div class="card">
-      <div class="card-title"><span>🌡️</span> Temperatura</div>
-      <label>Temperatura (°C)</label>
-      <input type="text" id="temperatura" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTemp(this.value)">
-      <div class="temp-indicator" id="tempIndicador"></div>
+      <div class="card-title"><span>🌡️</span> Temperatura
+        <button type="button" onclick="agregarTomaTemp()" style="margin-left:auto;background:var(--terra);color:white;border:none;border-radius:8px;padding:4px 10px;font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;">+ Toma</button>
+      </div>
+      <div id="tomasTemp">
+        <div class="toma-temp" data-index="0">
+          <div class="row-2">
+            <div>
+              <label>Temperatura (°C)</label>
+              <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:4px;">
+              <div class="temp-indicator" style="font-size:0.75rem;height:18px;font-weight:500;margin-bottom:8px"></div>
+            </div>
+            <div>
+              <label>Hora</label>
+              <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:12px;">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -471,15 +484,55 @@
     if (tab === 'ajustes') renderAccesos();
   };
 
-  window.checkTemp = (val) => {
-    const ind = document.getElementById('tempIndicador');
+  function evalTemp(val, ind) {
     const v = parseFloat(val.replace(',','.'));
     if (isNaN(v)||val==='') { ind.textContent=''; return; }
-    if (v < 37.5) { ind.textContent='🔵 Por debajo de lo normal'; ind.style.color='#2980b9'; }
-    else if (v <= 39.2) { ind.textContent='🟢 Normal (38–39.2°C)'; ind.style.color='#4a6741'; }
-    else if (v <= 39.5) { ind.textContent='🟡 Límite — vigilar'; ind.style.color='#e67e22'; }
-    else { ind.textContent='🔴 FIEBRE — llamar al veterinario'; ind.style.color='#c0392b'; }
+    if (v < 37.5) { ind.textContent='🔵 Bajo'; ind.style.color='#2980b9'; }
+    else if (v <= 39.2) { ind.textContent='🟢 Normal'; ind.style.color='#4a6741'; }
+    else if (v <= 39.5) { ind.textContent='🟡 Límite'; ind.style.color='#e67e22'; }
+    else { ind.textContent='🔴 FIEBRE'; ind.style.color='#c0392b'; }
+  }
+
+  window.checkTempRow = (input) => {
+    const ind = input.closest('.toma-temp').querySelector('.temp-indicator');
+    evalTemp(input.value, ind);
   };
+
+  window.agregarTomaTemp = () => {
+    const container = document.getElementById('tomasTemp');
+    const idx = container.querySelectorAll('.toma-temp').length;
+    const div = document.createElement('div');
+    div.className = 'toma-temp';
+    div.dataset.index = idx;
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em">Toma ${idx+1}</span>
+        <button type="button" onclick="this.closest('.toma-temp').remove()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.85rem;">✕</button>
+      </div>
+      <div class="row-2">
+        <div>
+          <label>Temperatura (°C)</label>
+          <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:4px;">
+          <div class="temp-indicator" style="font-size:0.75rem;height:18px;font-weight:500;margin-bottom:8px"></div>
+        </div>
+        <div>
+          <label>Hora</label>
+          <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:12px;">
+        </div>
+      </div>`;
+    container.appendChild(div);
+  };
+
+  function getTemperaturas() {
+    const tomas = document.querySelectorAll('.toma-temp');
+    const result = [];
+    tomas.forEach(toma => {
+      const temp = toma.querySelector('input[type="text"]').value;
+      const hora = toma.querySelector('input[type="time"]').value;
+      if (temp) result.push({ temp, hora });
+    });
+    return result;
+  }
 
   const symptomPlaceholders = {
     nauseas: 'Cuántas veces, desde cuándo...',
@@ -585,23 +638,48 @@
     if (!isOwner) { alert('Solo la dueña puede agregar entradas'); return; }
     const fecha = document.getElementById('fecha').value;
     if (!fecha) { alert('Selecciona una fecha'); return; }
-    const entry = {
-      fecha, hora: document.getElementById('hora').value,
-      ciclo: document.getElementById('ciclo').value,
-      temperatura: document.getElementById('temperatura').value,
-      duracion: document.getElementById('duracion').value,
-      sintomas: [...selectedSymptoms], sintomasDetalles: {...symptomDetails}, severidad: selectedSev,
-      notas: document.getElementById('notas').value,
-      fotos: [...currentPhotos], creadoEn: new Date().toISOString()
+    // Check duplicate date - skip if "Día de monitoreo"
+    const cicloVal = document.getElementById('ciclo').value;
+    if (cicloVal !== 'Día de monitoreo') {
+      const existing = entries.find(e => e.fecha === fecha && e.ciclo !== 'Día de monitoreo');
+      if (existing) {
+        alert('Ya existe una entrada para esta fecha. Puedes editarla desde el Historial, o selecciona "Día de monitoreo" para agregar un registro adicional.');
+        return;
+      }
+    }
+    // Clean entry - remove empty fields to avoid Firestore issues
+    const rawEntry = {
+      fecha, hora: document.getElementById('hora').value||'',
+      ciclo: document.getElementById('ciclo').value||'',
+      temperaturas: getTemperaturas(),
+      sintomas: [...selectedSymptoms],
+      sintomasDetalles: Object.fromEntries(Object.entries(symptomDetails).filter(([k,v])=>v!==undefined)),
+      severidad: selectedSev||'',
+      notas: document.getElementById('notas').value||'',
+      fotos: [...currentPhotos],
+      creadoEn: new Date().toISOString()
     };
+    // Remove undefined values recursively
+    const entry = JSON.parse(JSON.stringify(rawEntry));
     try {
       const docRef = await addDoc(collection(db, 'users', currentUser.uid, 'entries'), entry);
       entries.unshift({...entry, _id: docRef.id});
       document.getElementById('notas').value='';
       document.getElementById('ciclo').value='';
-      document.getElementById('temperatura').value='';
-      document.getElementById('duracion').value='';
-      document.getElementById('tempIndicador').textContent='';
+      document.getElementById('tomasTemp').innerHTML=`
+        <div class="toma-temp" data-index="0">
+          <div class="row-2">
+            <div>
+              <label>Temperatura (°C)</label>
+              <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:4px;">
+              <div class="temp-indicator" style="font-size:0.75rem;height:18px;font-weight:500;margin-bottom:8px"></div>
+            </div>
+            <div>
+              <label>Hora</label>
+              <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:12px;">
+            </div>
+          </div>
+        </div>`;
       document.getElementById('photoPreviews').innerHTML='';
       document.querySelectorAll('.symptom-btn').forEach(b=>b.classList.remove('selected'));
       document.querySelectorAll('.sev-btn').forEach(b=>b.classList.remove('selected'));
@@ -640,7 +718,7 @@
           <div><div class="entry-date">${fechaStr}</div><div class="entry-time">${e.hora||''} ${e.ciclo?'· '+e.ciclo:''}</div></div>
           <span class="badge ${badgeClass}">${badgeText}</span>
         </div>
-        ${(e.temperatura||e.duracion)?`<div class="entry-meta">${e.temperatura?'<span>🌡️ '+e.temperatura+'°C</span>':''}${e.duracion?'<span>⏱️ '+e.duracion+'</span>':''}</div>`:''}
+        ${e.temperaturas&&e.temperaturas.length?`<div class="entry-meta">${e.temperaturas.map(t=>'<span>🌡️ '+t.temp+'°C'+(t.hora?' · '+t.hora:'')+'</span>').join(' ')}</div>`:''}
         ${e.sintomas&&e.sintomas.length?'<div class="entry-symptoms">'+e.sintomas.map(s=>'<span class="symptom-tag">'+s+'</span>').join('')+'</div>':''}
         ${e.notas?'<div class="entry-notes">"'+e.notas+'"</div>':''}
         ${e.fotos&&e.fotos.length?'<div class="entry-photos">'+e.fotos.map(f=>'<img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')">').join('')+'</div>':''}
