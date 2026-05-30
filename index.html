@@ -378,6 +378,11 @@
       await cargarAccesos();
       checkRiskBanner();
       checkRecordatoriosBanner();
+      // Hide ajustes tab for non-owners
+      if (!isOwner) {
+        const ajustesTab = document.querySelector('.tab[onclick*="ajustes"]');
+        if (ajustesTab) ajustesTab.style.display = 'none';
+      }
     }
   }
 
@@ -500,7 +505,7 @@
     if (tab === 'historial') renderHistorial();
     if (tab === 'resumen') renderResumen();
     if (tab === 'citas') renderCitas();
-    if (tab === 'ajustes') renderAccesos();
+    if (tab === 'ajustes' && isOwner) renderAccesos();
     if (tab === 'recordatorios') renderRecordatorios();
   };
 
@@ -803,7 +808,7 @@
         ${e.temperaturas&&e.temperaturas.length?`<div class="entry-meta">${e.temperaturas.map(t=>'<span>🌡️ '+t.temp+'°C'+(t.hora?' · '+t.hora:'')+'</span>').join(' ')}</div>`:''}
         ${e.sintomas&&e.sintomas.length?'<div class="entry-symptoms">'+e.sintomas.map(s=>'<span class="symptom-tag">'+s+'</span>').join('')+'</div>':''}
         ${e.notas?'<div class="entry-notes">"'+e.notas+'"</div>':''}
-        ${e.fotos&&e.fotos.length?'<div class="entry-photos">'+e.fotos.map((f,fi)=>'<div style="position:relative;flex-shrink:0"><img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')" style="display:block"><button type="button" onclick="eliminarFoto(\''+e._id+'\','+fi+')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;line-height:1">✕</button></div>').join('')+'</div>':isOwner?'':''}
+        ${e.fotos&&e.fotos.length?'<div class="entry-photos">'+e.fotos.map((f,fi)=>'<div style="position:relative;flex-shrink:0"><img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')" ><button type="button" onclick="eliminarFoto(\''+e._id+'\','+fi+')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;line-height:1;display:" + (isOwner?"flex":"none") + "">✕</button></div>').join('')+'<</div>':isOwner?'':''}
         <div class="entry-footer">
           <span class="entry-cycle">${e.fecha}</span>
           ${isOwner?'<button type="button" class="btn-delete" onclick="eliminar(\''+e._id+'\')">🗑 Eliminar</button>':'<span></span>'}
@@ -1084,12 +1089,13 @@
   }
 
   window.eliminarFoto = async (entryId, fotoIndex) => {
+    if (!isOwner) { alert('Solo la dueña puede eliminar fotos'); return; }
     if (!confirm('¿Eliminar esta foto?')) return;
     const entry = entries.find(e => e._id === entryId);
     if (!entry) return;
     const newFotos = entry.fotos.filter((_, i) => i !== fotoIndex);
     try {
-      await updateDoc(doc(db, 'users', currentUser.uid, 'entries', entryId), { fotos: newFotos });
+      await updateDoc(doc(db, 'users', ownerUid, 'entries', entryId), { fotos: newFotos });
       entry.fotos = newFotos;
       renderHistorial();
     } catch(e) { alert('Error al eliminar foto: ' + e.message); }
