@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sora — Diario de Salud</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf6f0; --warm: #f0e8d8; --bark: #3d2b1f;
+    --moss: #4a6741; --terra: #c4622d; --gold: #d4a843;
+    --soft: #8b7355; --light-moss: #e8f0e5;
+    --danger: #c0392b; --warning: #e67e22;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--cream); font-family:'DM Sans',sans-serif; color:var(--bark); min-height:100vh; }
+  header { background:var(--bark); padding:20px 24px 16px; text-align:center; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(61,43,31,0.3); }
+  header h1 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold); letter-spacing:0.02em; }
+  header p { font-size:0.75rem; color:#a89070; margin-top:2px; font-weight:300; }
+  .tabs { display:flex; background:var(--warm); border-bottom:2px solid #e0d4c0; }
+  .tab { flex:1; padding:12px 8px; text-align:center; font-size:0.78rem; font-weight:500; color:var(--soft); cursor:pointer; border:none; background:none; transition:all 0.2s; border-bottom:3px solid transparent; margin-bottom:-2px; }
+  .tab.active { color:var(--terra); border-bottom-color:var(--terra); background:var(--cream); }
+  .tab-content { display:none; padding:16px; }
+  .tab-content.active { display:block; }
+  .card { background:white; border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 8px rgba(61,43,31,0.08); border:1px solid #ede5d8; }
+  .card-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--bark); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  label { display:block; font-size:0.75rem; font-weight:500; color:var(--soft); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.06em; }
+  input[type="text"], input[type="date"], input[type="time"], textarea, select { width:100%; padding:10px 14px; border:1.5px solid #ddd5c8; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:0.88rem; color:var(--bark); background:var(--cream); margin-bottom:12px; transition:border-color 0.2s; -webkit-appearance:none; }
+  input:focus, textarea:focus, select:focus { outline:none; border-color:var(--terra); background:white; }
+  textarea { min-height:80px; resize:vertical; }
+  .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .symptom-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px; }
+  .symptom-btn { padding:9px 10px; border:1.5px solid #ddd5c8; border-radius:10px; background:var(--cream); font-size:0.78rem; color:var(--soft); cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .symptom-btn.selected { background:var(--terra); border-color:var(--terra); color:white; font-weight:500; }
+  .severity { display:flex; gap:8px; margin-bottom:12px; }
+  .sev-btn { flex:1; padding:8px; border-radius:10px; border:1.5px solid #ddd5c8; background:var(--cream); font-size:0.78rem; font-weight:500; cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .sev-btn[data-sev="leve"].selected { background:var(--moss); border-color:var(--moss); color:white; }
+  .sev-btn[data-sev="moderado"].selected { background:var(--warning); border-color:var(--warning); color:white; }
+  .sev-btn[data-sev="grave"].selected { background:var(--danger); border-color:var(--danger); color:white; }
+  .temp-indicator { font-size:0.75rem; margin-top:-8px; margin-bottom:10px; height:18px; font-weight:500; }
+  .photo-upload { border:2px dashed #ddd5c8; border-radius:12px; padding:20px; text-align:center; cursor:pointer; margin-bottom:12px; transition:all 0.2s; background:var(--cream); }
+  .photo-upload:hover { border-color:var(--terra); background:#fff8f3; }
+  .photo-upload input { display:none; }
+  .photo-upload p { font-size:0.82rem; color:var(--soft); margin-top:6px; }
+  .photo-upload .icon { font-size:1.8rem; }
+  .photo-previews { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .photo-preview { position:relative; width:72px; height:72px; border-radius:10px; overflow:hidden; border:2px solid #ddd5c8; }
+  .photo-preview img { width:100%; height:100%; object-fit:cover; }
+  .photo-preview .remove-photo { position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .btn-primary { width:100%; padding:14px; background:var(--terra); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+  .btn-primary:hover { background:#a8531f; transform:translateY(-1px); }
+  .filter-bar { display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px; }
+  .filter-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #ddd5c8; background:var(--cream); font-size:0.75rem; color:var(--soft); cursor:pointer; white-space:nowrap; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
+  .filter-btn.active { background:var(--bark); border-color:var(--bark); color:white; }
+  .entry-card { background:white; border-radius:14px; margin-bottom:12px; overflow:hidden; box-shadow:0 2px 8px rgba(61,43,31,0.07); border:1px solid #ede5d8; }
+  .entry-header { padding:14px 16px 10px; display:flex; justify-content:space-between; align-items:flex-start; }
+  .entry-date { font-family:'Playfair Display',serif; font-size:0.95rem; color:var(--bark); }
+  .entry-time { font-size:0.72rem; color:var(--soft); margin-top:2px; }
+  .badge { padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:500; }
+  .badge-leve { background:var(--light-moss); color:var(--moss); }
+  .badge-moderado { background:#fef3e2; color:var(--warning); }
+  .badge-grave { background:#fde8e8; color:var(--danger); }
+  .badge-normal { background:var(--light-moss); color:var(--moss); }
+  .entry-symptoms { padding:0 16px 8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .symptom-tag { background:var(--warm); padding:3px 9px; border-radius:20px; font-size:0.72rem; color:var(--soft); }
+  .entry-meta { padding:0 16px 8px; font-size:0.78rem; color:var(--soft); display:flex; gap:16px; }
+  .entry-notes { padding:0 16px 12px; font-size:0.82rem; color:#6b5a46; line-height:1.5; font-style:italic; }
+  .entry-photos { display:flex; gap:6px; padding:0 16px 12px; overflow-x:auto; }
+  .entry-photo { width:64px; height:64px; border-radius:8px; object-fit:cover; flex-shrink:0; cursor:pointer; border:2px solid #ede5d8; }
+  .entry-footer { padding:8px 16px; background:var(--warm); display:flex; justify-content:space-between; align-items:center; }
+  .entry-cycle { font-size:0.72rem; color:var(--soft); }
+  .btn-delete { background:none; border:none; color:#c0392b; font-size:0.72rem; cursor:pointer; padding:4px 8px; border-radius:6px; font-family:'DM Sans',sans-serif; }
+  .btn-delete:hover { background:#fde8e8; }
+  .empty-state { text-align:center; padding:40px 20px; color:var(--soft); }
+  .empty-state .icon { font-size:3rem; margin-bottom:12px; }
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .stat-card { background:white; border-radius:14px; padding:16px; text-align:center; border:1px solid #ede5d8; box-shadow:0 2px 6px rgba(61,43,31,0.06); }
+  .stat-number { font-family:'Playfair Display',serif; font-size:2rem; color:var(--terra); line-height:1; }
+  .stat-label { font-size:0.72rem; color:var(--soft); margin-top:4px; text-transform:uppercase; letter-spacing:0.05em; }
+  .today-badge { background:var(--bark); color:var(--gold); font-size:0.72rem; padding:3px 10px; border-radius:20px; display:inline-block; margin-bottom:12px; font-family:'Playfair Display',serif; font-style:italic; }
+  .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999; justify-content:center; align-items:center; padding:20px; }
+  .modal.open { display:flex; }
+  .modal img { max-width:100%; max-height:80vh; border-radius:12px; }
+  .modal-close { position:absolute; top:16px; right:16px; background:white; border:none; border-radius:50%; width:36px; height:36px; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🐾 Sora — Diario de Salud</h1>
+  <p>Pastor Suizo · MUO · Lomustina</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('nueva',this)">✏️ Nueva</button>
+  <button class="tab" onclick="showTab('historial',this)">📋 Historial</button>
+  <button class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
+</div>
+
+<!-- NUEVA ENTRADA -->
+<div id="nueva" class="tab-content active">
+  <div class="card">
+    <div class="card-title"><span>📅</span> Fecha y hora</div>
+    <div class="row-2">
+      <div><label>Fecha</label><input type="date" id="fecha"></div>
+      <div><label>Hora</label><input type="time" id="hora"></div>
+    </div>
+    <label>Ciclo de lomustina</label>
+    <select id="ciclo">
+      <option value="">-- Seleccionar --</option>
+      <option>Ciclo 1 - Día 1 (29 mayo)</option>
+      <option>Ciclo 1 - Día 2 (30 mayo)</option>
+      <option>Ciclo 1 - Día 3 (31 mayo)</option>
+      <option>Ciclo 2 - Semana 1 (7 jun)</option>
+      <option>Ciclo 2 - Semana 2 (14 jun)</option>
+      <option>Ciclo 2 - Semana 3 (21 jun)</option>
+      <option>Sin lomustina ese día</option>
+      <option>Día de monitoreo</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🌡️</span> Temperatura y duración</div>
+    <div class="row-2">
+      <div>
+        <label>Temperatura (°C)</label>
+        <input type="text" id="temperatura" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTemp(this.value)">
+        <div class="temp-indicator" id="tempIndicador"></div>
+      </div>
+      <div>
+        <label>Duración síntoma</label>
+        <input type="text" id="duracion" placeholder="ej. 4 min">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🔍</span> Síntomas observados</div>
+    <div class="symptom-grid">
+      <button class="symptom-btn" onclick="toggleSymptom(this)">🤢 Náuseas</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">🤮 Vómito</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">😴 Letargo</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">🍽️ Sin apetito</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">⚡ Convulsión</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">🦵 Cojera</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">😰 Ansiedad</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">🌡️ Fiebre</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">💧 Diarrea</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">🩸 Sangrado</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">😵 Desorientación</button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">✅ Sin síntomas</button>
+    </div>
+    <label>Severidad general</label>
+    <div class="severity">
+      <button class="sev-btn" data-sev="leve" onclick="selectSev(this)">🟢 Leve</button>
+      <button class="sev-btn" data-sev="moderado" onclick="selectSev(this)">🟡 Moderado</button>
+      <button class="sev-btn" data-sev="grave" onclick="selectSev(this)">🔴 Grave</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📝</span> Notas</div>
+    <textarea id="notas" placeholder="Describe el comportamiento, si comió bien, ánimo, detalles del síntoma..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📷</span> Fotos</div>
+    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+      <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)">
+      <div class="icon">📸</div>
+      <p>Toca para agregar fotos</p>
+    </div>
+    <div class="photo-previews" id="photoPreviews"></div>
+  </div>
+
+  <button class="btn-primary" onclick="guardarEntrada()">💾 Guardar entrada</button>
+  <div style="height:20px"></div>
+</div>
+
+<!-- HISTORIAL -->
+<div id="historial" class="tab-content">
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
+    <button class="filter-btn" onclick="filtrar('grave',this)">🔴 Graves</button>
+    <button class="filter-btn" onclick="filtrar('convulsion',this)">⚡ Convulsiones</button>
+    <button class="filter-btn" onclick="filtrar('fiebre',this)">🌡️ Fiebre</button>
+    <button class="filter-btn" onclick="filtrar('foto',this)">📷 Con foto</button>
+  </div>
+  <div id="listaEntradas"></div>
+</div>
+
+<!-- RESUMEN -->
+<div id="resumen" class="tab-content">
+  <div id="resumenContent"></div>
+</div>
+
+<!-- MODAL FOTO -->
+<div class="modal" id="photoModal" onclick="closeModal()">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <img id="modalImg" src="" alt="">
+</div>
+
+<script>
+  let entries = JSON.parse(localStorage.getItem('soraEntries') || '[]');
+  let currentPhotos = [];
+  let selectedSymptoms = [];
+  let selectedSev = '';
+  let activeFilter = 'todos';
+
+  const now = new Date();
+  document.getElementById('fecha').value = now.toISOString().split('T')[0];
+  document.getElementById('hora').value = now.toTimeString().slice(0,5);
+
+  function showTab(tab, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+    btn.classList.add('active');
+    if (tab === 'historial') renderHistorial();
+    if (tab === 'resumen') renderResumen();
+  }
+
+  function checkTemp(val) {
+    const ind = document.getElementById('tempIndicador');
+    const v = parseFloat(val.replace(',','.'));
+    if (isNaN(v) || val === '') { ind.textContent = ''; return; }
+    if (v < 37.5) { ind.textContent = '🔵 Por debajo de lo normal'; ind.style.color = '#2980b9'; }
+    else if (v <= 39.2) { ind.textContent = '🟢 Normal (38 – 39.2°C)'; ind.style.color = '#4a6741'; }
+    else if (v <= 39.5) { ind.textContent = '🟡 Límite — vigilar'; ind.style.color = '#e67e22'; }
+    else { ind.textContent = '🔴 FIEBRE — llamar al veterinario'; ind.style.color = '#c0392b'; }
+  }
+
+  function toggleSymptom(btn) {
+    btn.classList.toggle('selected');
+    const txt = btn.textContent.trim();
+    if (btn.classList.contains('selected')) selectedSymptoms.push(txt);
+    else selectedSymptoms = selectedSymptoms.filter(s => s !== txt);
+  }
+
+  function selectSev(btn) {
+    document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSev = btn.dataset.sev;
+  }
+
+  function handlePhotos(input) {
+    Array.from(input.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => { currentPhotos.push(e.target.result); renderPhotoPreviews(); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderPhotoPreviews() {
+    document.getElementById('photoPreviews').innerHTML = currentPhotos.map((p,i) => `
+      <div class="photo-preview">
+        <img src="${p}" alt="">
+        <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
+      </div>`).join('');
+  }
+
+  function removePhoto(i) { currentPhotos.splice(i,1); renderPhotoPreviews(); }
+
+  function guardarEntrada() {
+    const fecha = document.getElementById('fecha').value;
+    if (!fecha) { alert('Por favor selecciona una fecha'); return; }
+    const entry = {
+      id: Date.now(),
+      fecha,
+      hora: document.getElementById('hora').value,
+      ciclo: document.getElementById('ciclo').value,
+      temperatura: document.getElementById('temperatura').value,
+      duracion: document.getElementById('duracion').value,
+      sintomas: [...selectedSymptoms],
+      severidad: selectedSev,
+      notas: document.getElementById('notas').value,
+      fotos: [...currentPhotos]
+    };
+    entries.unshift(entry);
+    localStorage.setItem('soraEntries', JSON.stringify(entries));
+    // Reset
+    document.getElementById('notas').value = '';
+    document.getElementById('ciclo').value = '';
+    document.getElementById('temperatura').value = '';
+    document.getElementById('duracion').value = '';
+    document.getElementById('tempIndicador').textContent = '';
+    document.getElementById('photoPreviews').innerHTML = '';
+    document.querySelectorAll('.symptom-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
+    currentPhotos = []; selectedSymptoms = []; selectedSev = '';
+    const btn = document.querySelector('.btn-primary');
+    btn.textContent = '✅ ¡Guardado!';
+    btn.style.background = '#4a6741';
+    setTimeout(() => { btn.textContent = '💾 Guardar entrada'; btn.style.background = ''; }, 2000);
+  }
+
+  function filtrar(tipo, btn) {
+    activeFilter = tipo;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderHistorial();
+  }
+
+  function renderHistorial() {
+    const container = document.getElementById('listaEntradas');
+    let filtered = [...entries];
+    if (activeFilter === 'grave') filtered = filtered.filter(e => e.severidad === 'grave');
+    if (activeFilter === 'convulsion') filtered = filtered.filter(e => e.sintomas && e.sintomas.some(s => s.includes('Convulsión')));
+    if (activeFilter === 'fiebre') filtered = filtered.filter(e => e.temperatura && parseFloat(e.temperatura.replace(',','.')) > 39.2);
+    if (activeFilter === 'foto') filtered = filtered.filter(e => e.fotos && e.fotos.length > 0);
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="empty-state"><div class="icon">🐾</div><p>${entries.length === 0 ? 'Aún no hay entradas.<br>Registra la primera observación.' : 'No hay entradas con este filtro.'}</p></div>`;
+      return;
+    }
+    container.innerHTML = filtered.map(e => {
+      const fechaObj = new Date(e.fecha + 'T12:00:00');
+      const fechaStr = fechaObj.toLocaleDateString('es-CO', {weekday:'short',day:'numeric',month:'long'});
+      const badgeClass = e.severidad ? 'badge-'+e.severidad : 'badge-normal';
+      const badgeText = e.severidad ? e.severidad.charAt(0).toUpperCase()+e.severidad.slice(1) : 'Normal';
+      const tempColor = e.temperatura ? (parseFloat(e.temperatura.replace(',','.')) > 39.2 ? '#c0392b' : '#4a6741') : var(--soft);
+      return `
+        <div class="entry-card">
+          <div class="entry-header">
+            <div>
+              <div class="entry-date">${fechaStr}</div>
+              <div class="entry-time">${e.hora||''} ${e.ciclo ? '· '+e.ciclo : ''}</div>
+            </div>
+            <span class="badge ${badgeClass}">${badgeText}</span>
+          </div>
+          ${(e.temperatura||e.duracion) ? `
+            <div class="entry-meta">
+              ${e.temperatura ? '<span>🌡️ '+e.temperatura+'°C</span>' : ''}
+              ${e.duracion ? '<span>⏱️ '+e.duracion+'</span>' : ''}
+            </div>` : ''}
+          ${e.sintomas&&e.sintomas.length ? `<div class="entry-symptoms">${e.sintomas.map(s=>'<span class="symptom-tag">'+s+'</span>').join('')}</div>` : ''}
+          ${e.notas ? '<div class="entry-notes">"'+e.notas+'"</div>' : ''}
+          ${e.fotos&&e.fotos.length ? '<div class="entry-photos">'+e.fotos.map(f=>'<img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')">').join('')+'</div>' : ''}
+          <div class="entry-footer">
+            <span class="entry-cycle">${e.fecha}</span>
+            <button class="btn-delete" onclick="eliminar(${e.id})">🗑 Eliminar</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function eliminar(id) {
+    if (!confirm('¿Eliminar esta entrada?')) return;
+    entries = entries.filter(e => e.id !== id);
+    localStorage.setItem('soraEntries', JSON.stringify(entries));
+    renderHistorial();
+  }
+
+  function renderResumen() {
+    const container = document.getElementById('resumenContent');
+    const total = entries.length;
+    const convulsiones = entries.filter(e => e.sintomas&&e.sintomas.some(s=>s.includes('Convulsión'))).length;
+    const graves = entries.filter(e => e.severidad==='grave').length;
+    const conFotos = entries.filter(e => e.fotos&&e.fotos.length>0).length;
+    const hoy = new Date().toISOString().split('T')[0];
+    const hoyEntradas = entries.filter(e => e.fecha===hoy);
+    container.innerHTML = `
+      <div class="today-badge">📅 ${new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})}</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Total entradas</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--danger)">${convulsiones}</div><div class="stat-label">Convulsiones</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--warning)">${graves}</div><div class="stat-label">Episodios graves</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--moss)">${conFotos}</div><div class="stat-label">Con fotos</div></div>
+      </div>
+      ${hoyEntradas.length > 0 ? `
+        <div class="card">
+          <div class="card-title"><span>☀️</span> Registros de hoy</div>
+          ${hoyEntradas.map(e=>`
+            <div style="padding:8px 0;border-bottom:1px solid var(--warm)">
+              <div style="font-size:0.82rem;font-weight:500">${e.hora||'Sin hora'} ${e.temperatura?'· 🌡️'+e.temperatura+'°C':''} ${e.duracion?'· ⏱️'+e.duracion:''}</div>
+              ${e.sintomas&&e.sintomas.length?'<div style="font-size:0.75rem;color:var(--soft);margin-top:2px">'+e.sintomas.join(', ')+'</div>':''}
+              ${e.notas?'<div style="font-size:0.75rem;color:var(--soft);font-style:italic;margin-top:3px">'+e.notas.substring(0,80)+(e.notas.length>80?'...':'')+'</div>':''}
+            </div>`).join('')}
+        </div>` : `
+        <div class="card" style="text-align:center;padding:24px">
+          <div style="font-size:2rem">🌸</div>
+          <p style="font-size:0.85rem;color:var(--soft);margin-top:8px">Sin registros hoy</p>
+        </div>`}
+      <div class="card">
+        <div class="card-title"><span>💊</span> Próximos recordatorios</div>
+        <div style="font-size:0.82rem;line-height:2.2;color:var(--soft)">
+          <div>🔴 <strong style="color:var(--bark)">29 mayo</strong> — Lomustina Día 1</div>
+          <div>🔴 <strong style="color:var(--bark)">30 mayo</strong> — Lomustina Día 2</div>
+          <div>🔴 <strong style="color:var(--bark)">31 mayo</strong> — Lomustina Día 3</div>
+          <div>⚠️ <strong style="color:var(--bark)">3–12 junio</strong> — Período de riesgo médula</div>
+          <div>🧪 <strong style="color:var(--bark)">12 junio</strong> — Fenobarbital sérico</div>
+          <div>👨‍⚕️ <strong style="color:var(--bark)">18 junio</strong> — Control neurólogo</div>
+        </div>
+      </div>`;
+  }
+
+  function openModal(src) {
+    document.getElementById('modalImg').src = src;
+    document.getElementById('photoModal').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('photoModal').classList.remove('open'); }
+</script>
+</body>
+</html>
