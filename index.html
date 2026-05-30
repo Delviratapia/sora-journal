@@ -131,6 +131,7 @@
     <button type="button" class="tab" onclick="showTab('historial',this)">📋 Historial</button>
     <button type="button" class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
     <button type="button" class="tab" onclick="showTab('citas',this)">🏥 Citas</button>
+    <button type="button" class="tab" onclick="showTab('recordatorios',this)">🔔 Avisos</button>
     <button type="button" class="tab" onclick="showTab('ajustes',this)">⚙️ Más</button>
   </div>
 
@@ -257,6 +258,23 @@
     <div id="listaCitas"></div>
   </div>
 
+  <!-- RECORDATORIOS -->
+  <div id="recordatorios" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span>🔔</span> Nuevo recordatorio</div>
+      <div class="row-2">
+        <div><label>Fecha inicio</label><input type="date" id="recFechaInicio"></div>
+        <div><label>Fecha fin <span style="font-size:0.7rem;color:#aaa">(opcional)</span></label><input type="date" id="recFechaFin"></div>
+      </div>
+      <label>Hora</label>
+      <input type="time" id="recHora">
+      <label>Mensaje</label>
+      <input type="text" id="recMensaje" placeholder="ej. Temperatura Sora noche">
+      <button type="button" class="btn-primary" onclick="guardarRecordatorio()">💾 Guardar recordatorio</button>
+    </div>
+    <div id="listaRecordatorios"></div>
+  </div>
+
   <!-- AJUSTES -->
   <div id="ajustes" class="tab-content">
     <div class="card">
@@ -359,6 +377,7 @@
       await cargarDatos();
       await cargarAccesos();
       checkRiskBanner();
+      checkRecordatoriosBanner();
     }
   }
 
@@ -482,6 +501,7 @@
     if (tab === 'resumen') renderResumen();
     if (tab === 'citas') renderCitas();
     if (tab === 'ajustes') renderAccesos();
+    if (tab === 'recordatorios') renderRecordatorios();
   };
 
   function evalTemp(val, ind) {
@@ -921,6 +941,147 @@
     };
     reader.readAsText(file);
   };
+
+  let recordatorios = JSON.parse(localStorage.getItem('soraRecordatorios') || '[]');
+
+  window.guardarRecordatorio = () => {
+    const fechaInicio = document.getElementById('recFechaInicio').value;
+    const fechaFin = document.getElementById('recFechaFin').value || fechaInicio;
+    const hora = document.getElementById('recHora').value;
+    const mensaje = document.getElementById('recMensaje').value.trim();
+    if (!fechaInicio || !hora || !mensaje) { alert('Completa fecha inicio, hora y mensaje'); return; }
+    if (fechaFin < fechaInicio) { alert('La fecha fin no puede ser antes que la fecha inicio'); return; }
+
+    // Generate one recordatorio per day in range
+    const start = new Date(fechaInicio + 'T12:00:00');
+    const end = new Date(fechaFin + 'T12:00:00');
+    const dias = Math.round((end - start) / (1000*60*60*24)) + 1;
+
+    if (dias > 60) { alert('El rango máximo es 60 días'); return; }
+
+    for (let i = 0; i < dias; i++) {
+      const d = new Date(start);
+      d.setDate(d.getDate() + i);
+      const fecha = d.toISOString().split('T')[0];
+      // Avoid duplicates
+      const exists = recordatorios.find(r => r.fecha === fecha && r.hora === hora && r.mensaje === mensaje);
+      if (!exists) {
+        recordatorios.push({ id: Date.now() + i, fecha, hora, mensaje, completado: false });
+      }
+    }
+
+    recordatorios.sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+    localStorage.setItem('soraRecordatorios', JSON.stringify(recordatorios));
+    document.getElementById('recFechaInicio').value = '';
+    document.getElementById('recFechaFin').value = '';
+    document.getElementById('recHora').value = '';
+    document.getElementById('recMensaje').value = '';
+    renderRecordatorios();
+    checkRecordatoriosBanner();
+    const btn = document.querySelector('#recordatorios .btn-primary');
+    const plural = dias > 1 ? dias + ' recordatorios creados' : 'Guardado';
+    btn.textContent = '✅ ' + plural; btn.style.background = '#4a6741';
+    setTimeout(() => { btn.textContent = '💾 Guardar recordatorio'; btn.style.background = ''; }, 2500);
+  };
+
+  function renderRecordatorios() {
+    const container = document.getElementById('listaRecordatorios');
+    if (!container) return;
+    if (recordatorios.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="icon">🔔</div><p>No hay recordatorios.<br>Agrega uno arriba.</p></div>';
+      return;
+    }
+    const ahora = new Date();
+    const hoy = ahora.toISOString().split('T')[0];
+    const horaActual = ahora.toTimeString().slice(0,5);
+
+    const pendientes = recordatorios.filter(r => !r.completado && (r.fecha > hoy || (r.fecha === hoy && r.hora >= horaActual)));
+    const caducados = recordatorios.filter(r => !r.completado && (r.fecha < hoy || (r.fecha === hoy && r.hora < horaActual)));
+    const completados = recordatorios.filter(r => r.completado);
+
+    let html = '';
+    if (pendientes.length > 0) {
+      html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Pendientes</div>';
+      html += pendientes.map(r => recCard(r, 'pendiente')).join('');
+    }
+    if (caducados.length > 0) {
+      html += '<div style="font-size:0.75rem;font-weight:500;color:var(--danger);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">⚠️ Caducados</div>';
+      html += caducados.map(r => recCard(r, 'caducado')).join('');
+    }
+    if (completados.length > 0) {
+      html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Completados</div>';
+      html += completados.map(r => recCard(r, 'completado')).join('');
+    }
+    container.innerHTML = html;
+  }
+
+  function recCard(r, estado) {
+    const fechaStr = new Date(r.fecha+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long'});
+    const borderColor = estado==='caducado'?'#fde8e8':estado==='completado'?'#e8f0e5':'#ede5d8';
+    const opacity = estado==='completado'?'0.6':'1';
+    return `<div class="entry-card" style="opacity:${opacity};border-color:${borderColor}">
+      <div class="entry-header">
+        <div>
+          <div class="entry-date">${fechaStr}</div>
+          <div class="entry-time">🕐 ${r.hora}</div>
+        </div>
+        <span class="badge ${estado==='caducado'?'badge-grave':estado==='completado'?'badge-leve':'badge-moderado'}">${estado==='caducado'?'Caducado':estado==='completado'?'✅ Hecho':'Pendiente'}</span>
+      </div>
+      <div style="padding:0 16px 12px;font-size:0.88rem;color:var(--bark);font-weight:500">🔔 ${r.mensaje}</div>
+      <div class="entry-footer">
+        ${!r.completado?`<button type="button" onclick="completarRecordatorio(${r.id})" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:'DM Sans',sans-serif;">✅ Marcar hecho</button>`:'<span></span>'}
+        <button type="button" class="btn-delete" onclick="eliminarRecordatorio(${r.id})">🗑 Eliminar</button>
+      </div>
+    </div>`;
+  }
+
+  window.completarRecordatorio = (id) => {
+    recordatorios = recordatorios.map(r => r.id===id ? {...r, completado:true} : r);
+    localStorage.setItem('soraRecordatorios', JSON.stringify(recordatorios));
+    renderRecordatorios();
+    checkRecordatoriosBanner();
+  };
+
+  window.eliminarRecordatorio = (id) => {
+    if (!confirm('¿Eliminar este recordatorio?')) return;
+    recordatorios = recordatorios.filter(r => r.id !== id);
+    localStorage.setItem('soraRecordatorios', JSON.stringify(recordatorios));
+    renderRecordatorios();
+    checkRecordatoriosBanner();
+  };
+
+  function checkRecordatoriosBanner() {
+    const ahora = new Date();
+    const hoy = ahora.toISOString().split('T')[0];
+    const horaActual = ahora.toTimeString().slice(0,5);
+    const banner = document.getElementById('riskBanner');
+
+    // Check caducados first (highest priority)
+    const caducados = recordatorios.filter(r =>
+      !r.completado && (r.fecha < hoy || (r.fecha === hoy && r.hora < horaActual))
+    );
+    if (caducados.length > 0) {
+      banner.style.display = 'block';
+      banner.className = 'risk-banner';
+      banner.style.background = '#c0392b';
+      banner.textContent = '⚠️ Tienes ' + caducados.length + ' recordatorio(s) caducado(s) sin completar — ve a 🔔 Avisos';
+      return;
+    }
+
+    // Check recordatorios for today
+    const hoyPendientes = recordatorios.filter(r =>
+      !r.completado && r.fecha === hoy && r.hora >= horaActual
+    );
+    if (hoyPendientes.length > 0) {
+      banner.style.display = 'block';
+      banner.className = 'risk-banner warning';
+      banner.textContent = '🔔 Hoy: ' + hoyPendientes.map(r => r.hora + ' — ' + r.mensaje).join(' · ');
+      return;
+    }
+
+    // Fall back to risk period banner
+    checkRiskBanner();
+  }
 
   window.eliminarFoto = async (entryId, fotoIndex) => {
     if (!confirm('¿Eliminar esta foto?')) return;
