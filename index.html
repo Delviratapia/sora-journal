@@ -93,8 +93,8 @@
 
 <div class="tabs">
   <button class="tab active" onclick="showTab('nueva',this)">✏️ Nueva</button>
-  <button class="tab" onclick="showTab('historial',this)">📋 Historial</button>
-  <button class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
+  <button type="button" class="tab" onclick="showTab('historial',this)">📋 Historial</button>
+  <button type="button" class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
 </div>
 
 <!-- NUEVA ENTRADA -->
@@ -137,24 +137,24 @@
   <div class="card">
     <div class="card-title"><span>🔍</span> Síntomas observados</div>
     <div class="symptom-grid">
-      <button class="symptom-btn" onclick="toggleSymptom(this)">🤢 Náuseas</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">🤮 Vómito</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">😴 Letargo</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">🍽️ Sin apetito</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">⚡ Convulsión</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">🦵 Cojera</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">😰 Ansiedad</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">🌡️ Fiebre</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">💧 Diarrea</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">🩸 Sangrado</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">😵 Desorientación</button>
-      <button class="symptom-btn" onclick="toggleSymptom(this)">✅ Sin síntomas</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🤢 Náuseas</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🤮 Vómito</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😴 Letargo</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🍽️ Sin apetito</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">⚡ Convulsión</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🦵 Cojera</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😰 Ansiedad</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🌡️ Fiebre</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">💧 Diarrea</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🩸 Sangrado</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😵 Desorientación</button>
+      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">✅ Sin síntomas</button>
     </div>
     <label>Severidad general</label>
     <div class="severity">
-      <button class="sev-btn" data-sev="leve" onclick="selectSev(this)">🟢 Leve</button>
-      <button class="sev-btn" data-sev="moderado" onclick="selectSev(this)">🟡 Moderado</button>
-      <button class="sev-btn" data-sev="grave" onclick="selectSev(this)">🔴 Grave</button>
+      <button type="button" class="sev-btn" data-sev="leve" onclick="selectSev(this)">🟢 Leve</button>
+      <button type="button" class="sev-btn" data-sev="moderado" onclick="selectSev(this)">🟡 Moderado</button>
+      <button type="button" class="sev-btn" data-sev="grave" onclick="selectSev(this)">🔴 Grave</button>
     </div>
   </div>
 
@@ -181,10 +181,10 @@
 <div id="historial" class="tab-content">
   <div class="filter-bar">
     <button class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
-    <button class="filter-btn" onclick="filtrar('grave',this)">🔴 Graves</button>
-    <button class="filter-btn" onclick="filtrar('convulsion',this)">⚡ Convulsiones</button>
-    <button class="filter-btn" onclick="filtrar('fiebre',this)">🌡️ Fiebre</button>
-    <button class="filter-btn" onclick="filtrar('foto',this)">📷 Con foto</button>
+    <button type="button" class="filter-btn" onclick="filtrar('grave',this)">🔴 Graves</button>
+    <button type="button" class="filter-btn" onclick="filtrar('convulsion',this)">⚡ Convulsiones</button>
+    <button type="button" class="filter-btn" onclick="filtrar('fiebre',this)">🌡️ Fiebre</button>
+    <button type="button" class="filter-btn" onclick="filtrar('foto',this)">📷 Con foto</button>
   </div>
   <div id="listaEntradas"></div>
 </div>
