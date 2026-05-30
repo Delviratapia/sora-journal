@@ -317,7 +317,7 @@
       const fechaStr = fechaObj.toLocaleDateString('es-CO', {weekday:'short',day:'numeric',month:'long'});
       const badgeClass = e.severidad ? 'badge-'+e.severidad : 'badge-normal';
       const badgeText = e.severidad ? e.severidad.charAt(0).toUpperCase()+e.severidad.slice(1) : 'Normal';
-      const tempColor = e.temperatura ? (parseFloat(e.temperatura.replace(',','.')) > 39.2 ? '#c0392b' : '#4a6741') : var(--soft);
+      const tempColor = e.temperatura ? (parseFloat(e.temperatura.replace(',','.')) > 39.2 ? '#c0392b' : '#4a6741') : '#8b7355';
       return `
         <div class="entry-card">
           <div class="entry-header">
