@@ -14,11 +14,12 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--cream); font-family:'DM Sans',sans-serif; color:var(--bark); min-height:100vh; }
-  header { background:var(--bark); padding:20px 24px 16px; text-align:center; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(61,43,31,0.3); }
-  header h1 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold); letter-spacing:0.02em; }
-  header p { font-size:0.75rem; color:#a89070; margin-top:2px; font-weight:300; }
-  .tabs { display:flex; background:var(--warm); border-bottom:2px solid #e0d4c0; }
-  .tab { flex:1; padding:12px 8px; text-align:center; font-size:0.78rem; font-weight:500; color:var(--soft); cursor:pointer; border:none; background:none; transition:all 0.2s; border-bottom:3px solid transparent; margin-bottom:-2px; }
+  header { background:var(--bark); padding:16px 24px 12px; text-align:center; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(61,43,31,0.3); }
+  header h1 { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--gold); }
+  header p { font-size:0.72rem; color:#a89070; margin-top:2px; }
+  .user-bar { font-size:0.7rem; color:#c8a870; margin-top:4px; }
+  .tabs { display:flex; background:var(--warm); border-bottom:2px solid #e0d4c0; overflow-x:auto; }
+  .tab { flex:1; min-width:60px; padding:11px 6px; text-align:center; font-size:0.72rem; font-weight:500; color:var(--soft); cursor:pointer; border:none; background:none; transition:all 0.2s; border-bottom:3px solid transparent; margin-bottom:-2px; white-space:nowrap; }
   .tab.active { color:var(--terra); border-bottom-color:var(--terra); background:var(--cream); }
   .tab-content { display:none; padding:16px; }
   .tab-content.active { display:block; }
@@ -38,9 +39,7 @@
   .sev-btn[data-sev="moderado"].selected { background:var(--warning); border-color:var(--warning); color:white; }
   .sev-btn[data-sev="grave"].selected { background:var(--danger); border-color:var(--danger); color:white; }
   .temp-indicator { font-size:0.75rem; margin-top:-8px; margin-bottom:10px; height:18px; font-weight:500; }
-  .photo-upload { border:2px dashed #ddd5c8; border-radius:12px; padding:20px; text-align:center; cursor:pointer; margin-bottom:12px; transition:all 0.2s; background:var(--cream); }
-  .photo-upload:hover { border-color:var(--terra); background:#fff8f3; }
-  .photo-upload input { display:none; }
+  .photo-upload { border:2px dashed #ddd5c8; border-radius:12px; padding:20px; text-align:center; cursor:pointer; margin-bottom:12px; background:var(--cream); }
   .photo-upload p { font-size:0.82rem; color:var(--soft); margin-top:6px; }
   .photo-upload .icon { font-size:1.8rem; }
   .photo-previews { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
@@ -48,7 +47,8 @@
   .photo-preview img { width:100%; height:100%; object-fit:cover; }
   .photo-preview .remove-photo { position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .btn-primary { width:100%; padding:14px; background:var(--terra); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
-  .btn-primary:hover { background:#a8531f; transform:translateY(-1px); }
+  .btn-primary:hover { background:#a8531f; }
+  .btn-secondary { width:100%; padding:12px; background:white; color:var(--bark); border:1.5px solid #ddd5c8; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
   .filter-bar { display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px; }
   .filter-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #ddd5c8; background:var(--cream); font-size:0.75rem; color:var(--soft); cursor:pointer; white-space:nowrap; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
   .filter-btn.active { background:var(--bark); border-color:var(--bark); color:white; }
@@ -70,11 +70,10 @@
   .entry-footer { padding:8px 16px; background:var(--warm); display:flex; justify-content:space-between; align-items:center; }
   .entry-cycle { font-size:0.72rem; color:var(--soft); }
   .btn-delete { background:none; border:none; color:#c0392b; font-size:0.72rem; cursor:pointer; padding:4px 8px; border-radius:6px; font-family:'DM Sans',sans-serif; }
-  .btn-delete:hover { background:#fde8e8; }
   .empty-state { text-align:center; padding:40px 20px; color:var(--soft); }
   .empty-state .icon { font-size:3rem; margin-bottom:12px; }
   .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-  .stat-card { background:white; border-radius:14px; padding:16px; text-align:center; border:1px solid #ede5d8; box-shadow:0 2px 6px rgba(61,43,31,0.06); }
+  .stat-card { background:white; border-radius:14px; padding:16px; text-align:center; border:1px solid #ede5d8; }
   .stat-number { font-family:'Playfair Display',serif; font-size:2rem; color:var(--terra); line-height:1; }
   .stat-label { font-size:0.72rem; color:var(--soft); margin-top:4px; text-transform:uppercase; letter-spacing:0.05em; }
   .today-badge { background:var(--bark); color:var(--gold); font-size:0.72rem; padding:3px 10px; border-radius:20px; display:inline-block; margin-bottom:12px; font-family:'Playfair Display',serif; font-style:italic; }
@@ -82,144 +81,162 @@
   .modal.open { display:flex; }
   .modal img { max-width:100%; max-height:80vh; border-radius:12px; }
   .modal-close { position:absolute; top:16px; right:16px; background:white; border:none; border-radius:50%; width:36px; height:36px; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:32px 24px; text-align:center; background:var(--cream); }
+  .login-screen h2 { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--bark); margin-bottom:8px; }
+  .login-screen p { color:var(--soft); font-size:0.9rem; margin-bottom:32px; line-height:1.6; }
+  .btn-google { display:flex; align-items:center; gap:12px; padding:14px 28px; background:white; border:1.5px solid #ddd5c8; border-radius:14px; font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:500; cursor:pointer; color:var(--bark); box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:all 0.2s; }
+  .btn-google:hover { box-shadow:0 4px 16px rgba(0,0,0,0.12); transform:translateY(-1px); }
+  .loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; color:var(--soft); gap:12px; }
+  .spinner { width:36px; height:36px; border:3px solid #ddd5c8; border-top-color:var(--terra); border-radius:50%; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🐾 Sora — Diario de Salud</h1>
-  <p>Pastor Suizo · MUO · Lomustina</p>
-</header>
-
-<div class="tabs">
-  <button class="tab active" onclick="showTab('nueva',this)">✏️ Nueva</button>
-  <button type="button" class="tab" onclick="showTab('historial',this)">📋 Historial</button>
-  <button type="button" class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
-  <button type="button" class="tab" onclick="showTab('citas',this)">🏥 Citas</button>
+<div class="loading" id="loadingScreen">
+  <div class="spinner"></div>
+  <p>Cargando...</p>
 </div>
 
-<!-- NUEVA ENTRADA -->
-<div id="nueva" class="tab-content active">
-  <div class="card">
-    <div class="card-title"><span>📅</span> Fecha y hora</div>
-    <div class="row-2">
-      <div><label>Fecha</label><input type="date" id="fecha"></div>
-      <div><label>Hora</label><input type="time" id="hora"></div>
-    </div>
-    <label>Ciclo de lomustina</label>
-    <select id="ciclo">
-      <option value="">-- Seleccionar --</option>
-      <option>Ciclo 1 - Día 1 (29 mayo)</option>
-      <option>Ciclo 1 - Día 2 (30 mayo)</option>
-      <option>Ciclo 1 - Día 3 (31 mayo)</option>
-      <option>Ciclo 2 - Semana 1 (7 jun)</option>
-      <option>Ciclo 2 - Semana 2 (14 jun)</option>
-      <option>Ciclo 2 - Semana 3 (21 jun)</option>
-      <option>Sin lomustina ese día</option>
-      <option>Día de monitoreo</option>
-    </select>
+<div class="login-screen" id="loginScreen" style="display:none">
+  <div style="font-size:4rem;margin-bottom:16px">🐾</div>
+  <h2>Sora — Diario de Salud</h2>
+  <p>Inicia sesión con tu cuenta Google<br>para acceder a los datos desde cualquier dispositivo.</p>
+  <button class="btn-google" onclick="loginGoogle()">
+    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    Continuar con Google
+  </button>
+</div>
+
+<div id="appContent" style="display:none">
+  <header>
+    <h1>🐾 Sora — Diario de Salud</h1>
+    <p>Pastor Suizo · MUO · Lomustina</p>
+    <div class="user-bar" id="userBar"></div>
+  </header>
+
+  <div class="tabs">
+    <button type="button" class="tab active" onclick="showTab('nueva',this)">✏️ Nueva</button>
+    <button type="button" class="tab" onclick="showTab('historial',this)">📋 Historial</button>
+    <button type="button" class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
+    <button type="button" class="tab" onclick="showTab('citas',this)">🏥 Citas</button>
   </div>
 
-  <div class="card">
-    <div class="card-title"><span>🌡️</span> Temperatura y duración</div>
-    <div class="row-2">
-      <div>
-        <label>Temperatura (°C)</label>
-        <input type="text" id="temperatura" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTemp(this.value)">
-        <div class="temp-indicator" id="tempIndicador"></div>
+  <!-- NUEVA ENTRADA -->
+  <div id="nueva" class="tab-content active">
+    <div class="card">
+      <div class="card-title"><span>📅</span> Fecha y hora</div>
+      <div class="row-2">
+        <div><label>Fecha</label><input type="date" id="fecha"></div>
+        <div><label>Hora</label><input type="time" id="hora"></div>
       </div>
-      <div>
-        <label>Duración síntoma</label>
-        <input type="text" id="duracion" placeholder="ej. 4 min">
+      <label>Ciclo de lomustina</label>
+      <select id="ciclo">
+        <option value="">-- Seleccionar --</option>
+        <option>Ciclo 1 - Día 1 (29 mayo)</option>
+        <option>Ciclo 1 - Día 2 (30 mayo)</option>
+        <option>Ciclo 1 - Día 3 (31 mayo)</option>
+        <option>Ciclo 2 - Semana 1 (7 jun)</option>
+        <option>Ciclo 2 - Semana 2 (14 jun)</option>
+        <option>Ciclo 2 - Semana 3 (21 jun)</option>
+        <option>Sin lomustina ese día</option>
+        <option>Día de monitoreo</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🌡️</span> Temperatura y duración</div>
+      <div class="row-2">
+        <div>
+          <label>Temperatura (°C)</label>
+          <input type="text" id="temperatura" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTemp(this.value)">
+          <div class="temp-indicator" id="tempIndicador"></div>
+        </div>
+        <div>
+          <label>Duración síntoma</label>
+          <input type="text" id="duracion" placeholder="ej. 4 min">
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title"><span>🔍</span> Síntomas observados</div>
-    <div class="symptom-grid">
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🤢 Náuseas</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🤮 Vómito</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😴 Letargo</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🍽️ Sin apetito</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">⚡ Convulsión</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🦵 Cojera</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😰 Ansiedad</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🌡️ Fiebre</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">💧 Diarrea</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🩸 Sangrado</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😵 Desorientación</button>
-      <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">✅ Sin síntomas</button>
+    <div class="card">
+      <div class="card-title"><span>🔍</span> Síntomas observados</div>
+      <div class="symptom-grid">
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🤢 Náuseas</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🤮 Vómito</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😴 Letargo</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🍽️ Sin apetito</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">⚡ Convulsión</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🦵 Cojera</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😰 Ansiedad</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🌡️ Fiebre</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">💧 Diarrea</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">🩸 Sangrado</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">😵 Desorientación</button>
+        <button type="button" class="symptom-btn" onclick="toggleSymptom(this)">✅ Sin síntomas</button>
+      </div>
+      <label>Severidad general</label>
+      <div class="severity">
+        <button type="button" class="sev-btn" data-sev="leve" onclick="selectSev(this)">🟢 Leve</button>
+        <button type="button" class="sev-btn" data-sev="moderado" onclick="selectSev(this)">🟡 Moderado</button>
+        <button type="button" class="sev-btn" data-sev="grave" onclick="selectSev(this)">🔴 Grave</button>
+      </div>
     </div>
-    <label>Severidad general</label>
-    <div class="severity">
-      <button type="button" class="sev-btn" data-sev="leve" onclick="selectSev(this)">🟢 Leve</button>
-      <button type="button" class="sev-btn" data-sev="moderado" onclick="selectSev(this)">🟡 Moderado</button>
-      <button type="button" class="sev-btn" data-sev="grave" onclick="selectSev(this)">🔴 Grave</button>
+
+    <div class="card">
+      <div class="card-title"><span>📝</span> Notas</div>
+      <textarea id="notas" placeholder="Describe el comportamiento, si comió bien, ánimo..."></textarea>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title"><span>📝</span> Notas</div>
-    <textarea id="notas" placeholder="Describe el comportamiento, si comió bien, ánimo, detalles del síntoma..."></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title"><span>📷</span> Fotos</div>
-    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-      <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)">
-      <div class="icon">📸</div>
-      <p>Toca para agregar fotos</p>
+    <div class="card">
+      <div class="card-title"><span>📷</span> Fotos</div>
+      <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+        <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)" style="display:none">
+        <div class="icon">📸</div>
+        <p>Toca para agregar fotos</p>
+      </div>
+      <div class="photo-previews" id="photoPreviews"></div>
     </div>
-    <div class="photo-previews" id="photoPreviews"></div>
+
+    <button type="button" class="btn-primary" onclick="guardarEntrada()">💾 Guardar entrada</button>
+    <div style="height:20px"></div>
   </div>
 
-  <button class="btn-primary" onclick="guardarEntrada()">💾 Guardar entrada</button>
-  <div style="height:12px"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <button type="button" onclick="exportarDatos()" style="padding:12px;background:white;color:#3d2b1f;border:1.5px solid #ddd5c8;border-radius:12px;font-family:DM Sans,sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;">📤 Exportar</button>
-    <label style="padding:12px;background:white;color:#3d2b1f;border:1.5px solid #ddd5c8;border-radius:12px;font-family:DM Sans,sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;text-align:center;text-transform:none;letter-spacing:0;margin:0;display:block;">
-      📥 Importar
-      <input type="file" accept=".json" onchange="importarDatos(this)" style="display:none">
-    </label>
-  </div>
-  <div style="height:20px"></div>
-</div>
-
-<!-- HISTORIAL -->
-<div id="historial" class="tab-content">
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
-    <button type="button" class="filter-btn" onclick="filtrar('grave',this)">🔴 Graves</button>
-    <button type="button" class="filter-btn" onclick="filtrar('convulsion',this)">⚡ Convulsiones</button>
-    <button type="button" class="filter-btn" onclick="filtrar('fiebre',this)">🌡️ Fiebre</button>
-    <button type="button" class="filter-btn" onclick="filtrar('foto',this)">📷 Con foto</button>
-  </div>
-  <div id="listaEntradas"></div>
-</div>
-
-<!-- RESUMEN -->
-<div id="resumen" class="tab-content">
-  <div id="resumenContent"></div>
-</div>
-
-<!-- CITAS MÉDICAS -->
-<div id="citas" class="tab-content">
-  <div class="card">
-    <div class="card-title"><span>🏥</span> Nueva cita médica</div>
-    <div class="row-2">
-      <div><label>Fecha</label><input type="date" id="citaFecha"></div>
-      <div><label>Hora</label><input type="time" id="citaHora"></div>
+  <!-- HISTORIAL -->
+  <div id="historial" class="tab-content">
+    <div class="filter-bar">
+      <button type="button" class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
+      <button type="button" class="filter-btn" onclick="filtrar('grave',this)">🔴 Graves</button>
+      <button type="button" class="filter-btn" onclick="filtrar('convulsion',this)">⚡ Convulsiones</button>
+      <button type="button" class="filter-btn" onclick="filtrar('fiebre',this)">🌡️ Fiebre</button>
+      <button type="button" class="filter-btn" onclick="filtrar('foto',this)">📷 Con foto</button>
     </div>
-    <label>Veterinario / Especialista</label>
-    <input type="text" id="citaVet" placeholder="ej. Dr. Matiz - MoviTeam Vet">
-    <label>Motivo de la cita</label>
-    <input type="text" id="citaMotivo" placeholder="ej. Control neurólogo, Fenobarbital sérico...">
-    <label>Notas adicionales</label>
-    <textarea id="citaNotas" placeholder="Preguntas que quieres hacer, cosas a mencionar..." style="min-height:60px"></textarea>
-    <button type="button" class="btn-primary" onclick="guardarCita()">💾 Guardar cita</button>
+    <div id="listaEntradas"></div>
   </div>
-  <div id="listaCitas"></div>
+
+  <!-- RESUMEN -->
+  <div id="resumen" class="tab-content">
+    <div id="resumenContent"></div>
+  </div>
+
+  <!-- CITAS -->
+  <div id="citas" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span>🏥</span> Nueva cita médica</div>
+      <div class="row-2">
+        <div><label>Fecha</label><input type="date" id="citaFecha"></div>
+        <div><label>Hora</label><input type="time" id="citaHora"></div>
+      </div>
+      <label>Veterinario / Especialista</label>
+      <input type="text" id="citaVet" placeholder="ej. Dr. Matiz - MoviTeam Vet">
+      <label>Motivo de la cita</label>
+      <input type="text" id="citaMotivo" placeholder="ej. Control neurólogo, Fenobarbital sérico...">
+      <label>Notas / Preguntas</label>
+      <textarea id="citaNotas" placeholder="Preguntas que quieres hacer, cosas a mencionar..." style="min-height:60px"></textarea>
+      <button type="button" class="btn-primary" onclick="guardarCita()">💾 Guardar cita</button>
+    </div>
+    <div id="listaCitas"></div>
+  </div>
 </div>
 
 <!-- MODAL FOTO -->
@@ -228,18 +245,67 @@
   <img id="modalImg" src="" alt="">
 </div>
 
-<script>
-  let entries = JSON.parse(localStorage.getItem('soraEntries') || '[]');
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBt8tW5Y4yMWizLhczJCUmB28udf3sO3X4",
+    authDomain: "sora-journal.firebaseapp.com",
+    projectId: "sora-journal",
+    storageBucket: "sora-journal.firebasestorage.app",
+    messagingSenderId: "962627650872",
+    appId: "1:962627650872:web:09d1f49dd7e152930e2dcd",
+    measurementId: "G-YM2DJB54JR"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let entries = [];
+  let citas = [];
   let currentPhotos = [];
   let selectedSymptoms = [];
   let selectedSev = '';
   let activeFilter = 'todos';
 
-  const now = new Date();
-  document.getElementById('fecha').value = now.toISOString().split('T')[0];
-  document.getElementById('hora').value = now.toTimeString().slice(0,5);
+  // Auth state
+  onAuthStateChanged(auth, async user => {
+    document.getElementById('loadingScreen').style.display = 'none';
+    if (user) {
+      currentUser = user;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appContent').style.display = 'block';
+      document.getElementById('userBar').textContent = '👤 ' + user.displayName;
+      const now = new Date();
+      document.getElementById('fecha').value = now.toISOString().split('T')[0];
+      document.getElementById('hora').value = now.toTimeString().slice(0,5);
+      await cargarDatos();
+    } else {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('appContent').style.display = 'none';
+    }
+  });
 
-  function showTab(tab, btn) {
+  window.loginGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try { await signInWithPopup(auth, provider); }
+    catch(e) { alert('Error al iniciar sesión: ' + e.message); }
+  };
+
+  async function cargarDatos() {
+    try {
+      const eSnap = await getDocs(query(collection(db, 'users', currentUser.uid, 'entries'), orderBy('fecha','desc')));
+      entries = eSnap.docs.map(d => ({...d.data(), _id: d.id}));
+      const cSnap = await getDocs(query(collection(db, 'users', currentUser.uid, 'citas'), orderBy('fecha','asc')));
+      citas = cSnap.docs.map(d => ({...d.data(), _id: d.id}));
+    } catch(e) { console.error(e); }
+  }
+
+  window.showTab = (tab, btn) => {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(tab).classList.add('active');
@@ -247,88 +313,85 @@
     if (tab === 'historial') renderHistorial();
     if (tab === 'resumen') renderResumen();
     if (tab === 'citas') renderCitas();
-  }
+  };
 
-  function checkTemp(val) {
+  window.checkTemp = (val) => {
     const ind = document.getElementById('tempIndicador');
     const v = parseFloat(val.replace(',','.'));
-    if (isNaN(v) || val === '') { ind.textContent = ''; return; }
-    if (v < 37.5) { ind.textContent = '🔵 Por debajo de lo normal'; ind.style.color = '#2980b9'; }
-    else if (v <= 39.2) { ind.textContent = '🟢 Normal (38 – 39.2°C)'; ind.style.color = '#4a6741'; }
-    else if (v <= 39.5) { ind.textContent = '🟡 Límite — vigilar'; ind.style.color = '#e67e22'; }
-    else { ind.textContent = '🔴 FIEBRE — llamar al veterinario'; ind.style.color = '#c0392b'; }
-  }
+    if (isNaN(v)||val==='') { ind.textContent=''; return; }
+    if (v < 37.5) { ind.textContent='🔵 Por debajo de lo normal'; ind.style.color='#2980b9'; }
+    else if (v <= 39.2) { ind.textContent='🟢 Normal (38–39.2°C)'; ind.style.color='#4a6741'; }
+    else if (v <= 39.5) { ind.textContent='🟡 Límite — vigilar'; ind.style.color='#e67e22'; }
+    else { ind.textContent='🔴 FIEBRE — llamar al veterinario'; ind.style.color='#c0392b'; }
+  };
 
-  function toggleSymptom(btn) {
+  window.toggleSymptom = (btn) => {
     btn.classList.toggle('selected');
     const txt = btn.textContent.trim();
     if (btn.classList.contains('selected')) selectedSymptoms.push(txt);
     else selectedSymptoms = selectedSymptoms.filter(s => s !== txt);
-  }
+  };
 
-  function selectSev(btn) {
+  window.selectSev = (btn) => {
     document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     selectedSev = btn.dataset.sev;
-  }
+  };
 
-  function handlePhotos(input) {
+  window.handlePhotos = (input) => {
     Array.from(input.files).forEach(file => {
       const reader = new FileReader();
       reader.onload = e => { currentPhotos.push(e.target.result); renderPhotoPreviews(); };
       reader.readAsDataURL(file);
     });
-  }
+  };
 
   function renderPhotoPreviews() {
     document.getElementById('photoPreviews').innerHTML = currentPhotos.map((p,i) => `
       <div class="photo-preview">
-        <img src="${p}" alt="">
+        <img src="${p}">
         <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
       </div>`).join('');
   }
 
-  function removePhoto(i) { currentPhotos.splice(i,1); renderPhotoPreviews(); }
+  window.removePhoto = (i) => { currentPhotos.splice(i,1); renderPhotoPreviews(); };
 
-  function guardarEntrada() {
+  window.guardarEntrada = async () => {
     const fecha = document.getElementById('fecha').value;
-    if (!fecha) { alert('Por favor selecciona una fecha'); return; }
+    if (!fecha) { alert('Selecciona una fecha'); return; }
     const entry = {
-      id: Date.now(),
-      fecha,
-      hora: document.getElementById('hora').value,
+      fecha, hora: document.getElementById('hora').value,
       ciclo: document.getElementById('ciclo').value,
       temperatura: document.getElementById('temperatura').value,
       duracion: document.getElementById('duracion').value,
-      sintomas: [...selectedSymptoms],
-      severidad: selectedSev,
+      sintomas: [...selectedSymptoms], severidad: selectedSev,
       notas: document.getElementById('notas').value,
-      fotos: [...currentPhotos]
+      fotos: [...currentPhotos], creadoEn: new Date().toISOString()
     };
-    entries.unshift(entry);
-    localStorage.setItem('soraEntries', JSON.stringify(entries));
-    // Reset
-    document.getElementById('notas').value = '';
-    document.getElementById('ciclo').value = '';
-    document.getElementById('temperatura').value = '';
-    document.getElementById('duracion').value = '';
-    document.getElementById('tempIndicador').textContent = '';
-    document.getElementById('photoPreviews').innerHTML = '';
-    document.querySelectorAll('.symptom-btn').forEach(b => b.classList.remove('selected'));
-    document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
-    currentPhotos = []; selectedSymptoms = []; selectedSev = '';
-    const btn = document.querySelector('.btn-primary');
-    btn.textContent = '✅ ¡Guardado!';
-    btn.style.background = '#4a6741';
-    setTimeout(() => { btn.textContent = '💾 Guardar entrada'; btn.style.background = ''; }, 2000);
-  }
+    try {
+      const docRef = await addDoc(collection(db, 'users', currentUser.uid, 'entries'), entry);
+      entries.unshift({...entry, _id: docRef.id});
+      document.getElementById('notas').value = '';
+      document.getElementById('ciclo').value = '';
+      document.getElementById('temperatura').value = '';
+      document.getElementById('duracion').value = '';
+      document.getElementById('tempIndicador').textContent = '';
+      document.getElementById('photoPreviews').innerHTML = '';
+      document.querySelectorAll('.symptom-btn').forEach(b => b.classList.remove('selected'));
+      document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
+      currentPhotos = []; selectedSymptoms = []; selectedSev = '';
+      const btn = document.querySelector('#nueva .btn-primary');
+      btn.textContent = '✅ ¡Guardado!'; btn.style.background = '#4a6741';
+      setTimeout(() => { btn.textContent = '💾 Guardar entrada'; btn.style.background = ''; }, 2000);
+    } catch(e) { alert('Error al guardar: ' + e.message); }
+  };
 
-  function filtrar(tipo, btn) {
+  window.filtrar = (tipo, btn) => {
     activeFilter = tipo;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderHistorial();
-  }
+  };
 
   function renderHistorial() {
     const container = document.getElementById('listaEntradas');
@@ -338,46 +401,36 @@
     if (activeFilter === 'fiebre') filtered = filtered.filter(e => e.temperatura && parseFloat(e.temperatura.replace(',','.')) > 39.2);
     if (activeFilter === 'foto') filtered = filtered.filter(e => e.fotos && e.fotos.length > 0);
     if (filtered.length === 0) {
-      container.innerHTML = `<div class="empty-state"><div class="icon">🐾</div><p>${entries.length === 0 ? 'Aún no hay entradas.<br>Registra la primera observación.' : 'No hay entradas con este filtro.'}</p></div>`;
+      container.innerHTML = `<div class="empty-state"><div class="icon">🐾</div><p>${entries.length===0?'Aún no hay entradas.':'No hay entradas con este filtro.'}</p></div>`;
       return;
     }
     container.innerHTML = filtered.map(e => {
-      const fechaObj = new Date(e.fecha + 'T12:00:00');
-      const fechaStr = fechaObj.toLocaleDateString('es-CO', {weekday:'short',day:'numeric',month:'long'});
+      const fechaStr = new Date(e.fecha+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long'});
       const badgeClass = e.severidad ? 'badge-'+e.severidad : 'badge-normal';
       const badgeText = e.severidad ? e.severidad.charAt(0).toUpperCase()+e.severidad.slice(1) : 'Normal';
-      const tempColor = e.temperatura ? (parseFloat(e.temperatura.replace(',','.')) > 39.2 ? '#c0392b' : '#4a6741') : '#8b7355';
-      return `
-        <div class="entry-card">
-          <div class="entry-header">
-            <div>
-              <div class="entry-date">${fechaStr}</div>
-              <div class="entry-time">${e.hora||''} ${e.ciclo ? '· '+e.ciclo : ''}</div>
-            </div>
-            <span class="badge ${badgeClass}">${badgeText}</span>
-          </div>
-          ${(e.temperatura||e.duracion) ? `
-            <div class="entry-meta">
-              ${e.temperatura ? '<span>🌡️ '+e.temperatura+'°C</span>' : ''}
-              ${e.duracion ? '<span>⏱️ '+e.duracion+'</span>' : ''}
-            </div>` : ''}
-          ${e.sintomas&&e.sintomas.length ? `<div class="entry-symptoms">${e.sintomas.map(s=>'<span class="symptom-tag">'+s+'</span>').join('')}</div>` : ''}
-          ${e.notas ? '<div class="entry-notes">"'+e.notas+'"</div>' : ''}
-          ${e.fotos&&e.fotos.length ? '<div class="entry-photos">'+e.fotos.map(f=>'<img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')">').join('')+'</div>' : ''}
-          <div class="entry-footer">
-            <span class="entry-cycle">${e.fecha}</span>
-            <button class="btn-delete" onclick="eliminar(${e.id})">🗑 Eliminar</button>
-          </div>
-        </div>`;
+      return `<div class="entry-card">
+        <div class="entry-header">
+          <div><div class="entry-date">${fechaStr}</div><div class="entry-time">${e.hora||''} ${e.ciclo?'· '+e.ciclo:''}</div></div>
+          <span class="badge ${badgeClass}">${badgeText}</span>
+        </div>
+        ${(e.temperatura||e.duracion)?`<div class="entry-meta">${e.temperatura?'<span>🌡️ '+e.temperatura+'°C</span>':''}${e.duracion?'<span>⏱️ '+e.duracion+'</span>':''}</div>`:''}
+        ${e.sintomas&&e.sintomas.length?'<div class="entry-symptoms">'+e.sintomas.map(s=>'<span class="symptom-tag">'+s+'</span>').join('')+'</div>':''}
+        ${e.notas?'<div class="entry-notes">"'+e.notas+'"</div>':''}
+        ${e.fotos&&e.fotos.length?'<div class="entry-photos">'+e.fotos.map(f=>'<img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')">').join('')+'</div>':''}
+        <div class="entry-footer">
+          <span class="entry-cycle">${e.fecha}</span>
+          <button type="button" class="btn-delete" onclick="eliminar('${e._id}')">🗑 Eliminar</button>
+        </div>
+      </div>`;
     }).join('');
   }
 
-  function eliminar(id) {
+  window.eliminar = async (id) => {
     if (!confirm('¿Eliminar esta entrada?')) return;
-    entries = entries.filter(e => e.id !== id);
-    localStorage.setItem('soraEntries', JSON.stringify(entries));
+    await deleteDoc(doc(db, 'users', currentUser.uid, 'entries', id));
+    entries = entries.filter(e => e._id !== id);
     renderHistorial();
-  }
+  };
 
   function renderResumen() {
     const container = document.getElementById('resumenContent');
@@ -395,156 +448,88 @@
         <div class="stat-card"><div class="stat-number" style="color:var(--warning)">${graves}</div><div class="stat-label">Episodios graves</div></div>
         <div class="stat-card"><div class="stat-number" style="color:var(--moss)">${conFotos}</div><div class="stat-label">Con fotos</div></div>
       </div>
-      ${hoyEntradas.length > 0 ? `
-        <div class="card">
-          <div class="card-title"><span>☀️</span> Registros de hoy</div>
-          ${hoyEntradas.map(e=>`
-            <div style="padding:8px 0;border-bottom:1px solid var(--warm)">
-              <div style="font-size:0.82rem;font-weight:500">${e.hora||'Sin hora'} ${e.temperatura?'· 🌡️'+e.temperatura+'°C':''} ${e.duracion?'· ⏱️'+e.duracion:''}</div>
-              ${e.sintomas&&e.sintomas.length?'<div style="font-size:0.75rem;color:var(--soft);margin-top:2px">'+e.sintomas.join(', ')+'</div>':''}
-              ${e.notas?'<div style="font-size:0.75rem;color:var(--soft);font-style:italic;margin-top:3px">'+e.notas.substring(0,80)+(e.notas.length>80?'...':'')+'</div>':''}
-            </div>`).join('')}
-        </div>` : `
-        <div class="card" style="text-align:center;padding:24px">
-          <div style="font-size:2rem">🌸</div>
-          <p style="font-size:0.85rem;color:var(--soft);margin-top:8px">Sin registros hoy</p>
-        </div>`}
-      <div class="card">
-        <div class="card-title"><span>💊</span> Próximos recordatorios</div>
+      ${hoyEntradas.length>0?`<div class="card"><div class="card-title"><span>☀️</span> Hoy</div>${hoyEntradas.map(e=>`<div style="padding:8px 0;border-bottom:1px solid var(--warm)"><div style="font-size:0.82rem;font-weight:500">${e.hora||'Sin hora'}${e.temperatura?' · 🌡️'+e.temperatura+'°C':''}${e.duracion?' · ⏱️'+e.duracion:''}</div>${e.sintomas&&e.sintomas.length?'<div style="font-size:0.75rem;color:var(--soft);margin-top:2px">'+e.sintomas.join(', ')+'</div>':''}${e.notas?'<div style="font-size:0.75rem;color:var(--soft);font-style:italic;margin-top:3px">'+e.notas.substring(0,80)+'</div>':''}</div>`).join('')}</div>`:''}
+      <div class="card"><div class="card-title"><span>💊</span> Recordatorios</div>
         <div style="font-size:0.82rem;line-height:2.2;color:var(--soft)">
           <div>🔴 <strong style="color:var(--bark)">29 mayo</strong> — Lomustina Día 1</div>
           <div>🔴 <strong style="color:var(--bark)">30 mayo</strong> — Lomustina Día 2</div>
           <div>🔴 <strong style="color:var(--bark)">31 mayo</strong> — Lomustina Día 3</div>
-          <div>⚠️ <strong style="color:var(--bark)">3–12 junio</strong> — Período de riesgo médula</div>
+          <div>⚠️ <strong style="color:var(--bark)">3–12 junio</strong> — Período riesgo médula</div>
           <div>🧪 <strong style="color:var(--bark)">12 junio</strong> — Fenobarbital sérico</div>
           <div>👨‍⚕️ <strong style="color:var(--bark)">18 junio</strong> — Control neurólogo</div>
         </div>
       </div>`;
   }
 
-  let citas = JSON.parse(localStorage.getItem('soraCitas') || '[]');
-
-  function guardarCita() {
+  window.guardarCita = async () => {
     const fecha = document.getElementById('citaFecha').value;
-    if (!fecha) { alert('Por favor selecciona una fecha'); return; }
+    if (!fecha) { alert('Selecciona una fecha'); return; }
     const cita = {
-      id: Date.now(),
-      fecha,
-      hora: document.getElementById('citaHora').value,
+      fecha, hora: document.getElementById('citaHora').value,
       vet: document.getElementById('citaVet').value,
       motivo: document.getElementById('citaMotivo').value,
       notas: document.getElementById('citaNotas').value,
       completada: false
     };
-    citas.push(cita);
-    citas.sort((a,b) => a.fecha.localeCompare(b.fecha));
-    localStorage.setItem('soraCitas', JSON.stringify(citas));
-    document.getElementById('citaFecha').value = '';
-    document.getElementById('citaHora').value = '';
-    document.getElementById('citaVet').value = '';
-    document.getElementById('citaMotivo').value = '';
-    document.getElementById('citaNotas').value = '';
+    const docRef = await addDoc(collection(db, 'users', currentUser.uid, 'citas'), cita);
+    citas.push({...cita, _id: docRef.id});
+    citas.sort((a,b)=>a.fecha.localeCompare(b.fecha));
+    document.getElementById('citaFecha').value='';
+    document.getElementById('citaHora').value='';
+    document.getElementById('citaVet').value='';
+    document.getElementById('citaMotivo').value='';
+    document.getElementById('citaNotas').value='';
     renderCitas();
     const btn = document.querySelector('#citas .btn-primary');
-    btn.textContent = '✅ ¡Guardado!';
-    btn.style.background = '#4a6741';
-    setTimeout(() => { btn.textContent = '💾 Guardar cita'; btn.style.background = ''; }, 2000);
-  }
+    btn.textContent='✅ ¡Guardado!'; btn.style.background='#4a6741';
+    setTimeout(()=>{btn.textContent='💾 Guardar cita';btn.style.background='';},2000);
+  };
 
   function renderCitas() {
     const container = document.getElementById('listaCitas');
     if (!container) return;
-    if (citas.length === 0) {
-      container.innerHTML = '<div class="empty-state"><div class="icon">🏥</div><p>No hay citas programadas.</p></div>';
-      return;
-    }
-    const hoy = new Date().toISOString().split("T")[0];
-    const proximas = citas.filter(c => !c.completada && c.fecha >= hoy);
-    const pasadas = citas.filter(c => c.completada || c.fecha < hoy);
-    let html = '';
-    if (proximas.length > 0) {
-      html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Próximas</div>';
-      html += proximas.map(c => citaCard(c, false)).join('');
-    }
-    if (pasadas.length > 0) {
-      html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Pasadas</div>';
-      html += pasadas.map(c => citaCard(c, true)).join('');
-    }
-    container.innerHTML = html;
+    if (citas.length===0) { container.innerHTML='<div class="empty-state"><div class="icon">🏥</div><p>No hay citas programadas.</p></div>'; return; }
+    const hoy = new Date().toISOString().split('T')[0];
+    const proximas = citas.filter(c=>!c.completada&&c.fecha>=hoy);
+    const pasadas = citas.filter(c=>c.completada||c.fecha<hoy);
+    let html='';
+    if (proximas.length>0) { html+='<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Próximas</div>'; html+=proximas.map(c=>citaCard(c,false)).join(''); }
+    if (pasadas.length>0) { html+='<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Pasadas</div>'; html+=pasadas.map(c=>citaCard(c,true)).join(''); }
+    container.innerHTML=html;
   }
 
-  function citaCard(c, pasada) {
-    const fechaObj = new Date(c.fecha + 'T12:00:00');
-    const fechaStr = fechaObj.toLocaleDateString('es-CO', {weekday:'short',day:'numeric',month:'long'});
-    return '<div class="entry-card" style="opacity:'+( pasada ? '0.65' : '1')+'">'+
-      '<div class="entry-header">'+
-        '<div>'+
-          '<div class="entry-date">'+fechaStr+'</div>'+
-          '<div class="entry-time">'+(c.hora||'')+(c.vet?' · '+c.vet:'')+'</div>'+
-        '</div>'+
-        '<span class="badge '+(pasada?'badge-normal':'badge-leve')+'">'+(pasada?'Pasada':'Próxima')+'</span>'+
-      '</div>'+
-      (c.motivo?'<div style="padding:0 16px 8px;font-size:0.85rem;font-weight:500;color:var(--bark)">'+c.motivo+'</div>':'')+
-      (c.notas?'<div class="entry-notes">"'+c.notas+'"</div>':'')+
-      '<div class="entry-footer">'+
-        '<button type="button" onclick="toggleCita('+c.id+')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:DM Sans,sans-serif;">'+(c.completada?'↩️ Reabrir':'✅ Completada')+'</button>'+
-        '<button type="button" class="btn-delete" onclick="eliminarCita('+c.id+')">🗑 Eliminar</button>'+
-      '</div>'+
-    '</div>';
+  function citaCard(c,pasada) {
+    const fechaStr = new Date(c.fecha+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long'});
+    return `<div class="entry-card" style="opacity:${pasada?'0.65':'1'}">
+      <div class="entry-header">
+        <div><div class="entry-date">${fechaStr}</div><div class="entry-time">${c.hora||''}${c.vet?' · '+c.vet:''}</div></div>
+        <span class="badge ${pasada?'badge-normal':'badge-leve'}">${pasada?'Pasada':'Próxima'}</span>
+      </div>
+      ${c.motivo?'<div style="padding:0 16px 8px;font-size:0.85rem;font-weight:500;color:var(--bark)">'+c.motivo+'</div>':''}
+      ${c.notas?'<div class="entry-notes">"'+c.notas+'"</div>':''}
+      <div class="entry-footer">
+        <button type="button" onclick="toggleCita('${c._id}')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:DM Sans,sans-serif;">${c.completada?'↩️ Reabrir':'✅ Completada'}</button>
+        <button type="button" class="btn-delete" onclick="eliminarCita('${c._id}')">🗑 Eliminar</button>
+      </div>
+    </div>`;
   }
 
-  function toggleCita(id) {
-    citas = citas.map(c => c.id === id ? {...c, completada: !c.completada} : c);
-    localStorage.setItem('soraCitas', JSON.stringify(citas));
+  window.toggleCita = async (id) => {
+    const cita = citas.find(c=>c._id===id);
+    await updateDoc(doc(db,'users',currentUser.uid,'citas',id),{completada:!cita.completada});
+    citas = citas.map(c=>c._id===id?{...c,completada:!c.completada}:c);
     renderCitas();
-  }
+  };
 
-  function eliminarCita(id) {
+  window.eliminarCita = async (id) => {
     if (!confirm('¿Eliminar esta cita?')) return;
-    citas = citas.filter(c => c.id !== id);
-    localStorage.setItem('soraCitas', JSON.stringify(citas));
+    await deleteDoc(doc(db,'users',currentUser.uid,'citas',id));
+    citas = citas.filter(c=>c._id!==id);
     renderCitas();
-  }
+  };
 
-  function exportarDatos() {
-    const data = JSON.stringify({entries: JSON.parse(localStorage.getItem('soraEntries') || '[]'), citas: JSON.parse(localStorage.getItem('soraCitas') || '[]')});
-    const blob = new Blob([data], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sora-respaldo-' + new Date().toISOString().split('T')[0] + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function importarDatos(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const data = JSON.parse(e.target.result);
-        if (Array.isArray(data)) {
-          localStorage.setItem('soraEntries', JSON.stringify(data));
-          entries = data;
-          alert('✅ ' + data.length + ' entradas importadas');
-        } else if (data.entries) {
-          localStorage.setItem('soraEntries', JSON.stringify(data.entries));
-          entries = data.entries;
-          if (data.citas) { localStorage.setItem('soraCitas', JSON.stringify(data.citas)); citas = data.citas; }
-          alert('✅ ' + data.entries.length + ' entradas y ' + (data.citas||[]).length + ' citas importadas');
-        } else { alert('Archivo no válido'); return; }
-      } catch { alert('Error al leer el archivo'); }
-    };
-    reader.readAsText(file);
-  }
-
-  function openModal(src) {
-    document.getElementById('modalImg').src = src;
-    document.getElementById('photoModal').classList.add('open');
-  }
-
-  function closeModal() { document.getElementById('photoModal').classList.remove('open'); }
+  window.openModal = (src) => { document.getElementById('modalImg').src=src; document.getElementById('photoModal').classList.add('open'); };
+  window.closeModal = () => { document.getElementById('photoModal').classList.remove('open'); };
 </script>
 </body>
 </html>
