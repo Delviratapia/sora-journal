@@ -808,41 +808,10 @@
         ${e.temperaturas&&e.temperaturas.length?`<div class="entry-meta">${e.temperaturas.map(t=>'<span>🌡️ '+t.temp+'°C'+(t.hora?' · '+t.hora:'')+'</span>').join(' ')}</div>`:''}
         ${e.sintomas&&e.sintomas.length?'<div class="entry-symptoms">'+e.sintomas.map(s=>'<span class="symptom-tag">'+s+'</span>').join('')+'</div>':''}
         ${e.notas?'<div class="entry-notes">"'+e.notas+'"</div>':''}
-        ${e.fotos&&e.fotos.length?'<div class="entry-photos">'+e.fotos.map((f,fi)=>'<div style="position:relative;flex-shrink:0"><img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')" ><button type="button" onclick="eliminarFoto(\''+e._id+'\','+fi+')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;line-height:1;display:" + (isOwner?"flex":"none") + "">✕</button></div>').join('')+'<</div>':isOwner?'':''}
-        <div class="entry-footer">
-          <span class="entry-cycle">${e.fecha}</span>
-          ${isOwner?'<button type="button" class="btn-delete" onclick="eliminar(\''+e._id+'\')">🗑 Eliminar</button>':'<span></span>'}
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  window.eliminar = async (id) => {
-    if (!isOwner) return;
-    if (!confirm('¿Eliminar esta entrada?')) return;
-    // Photos stay in Cloudinary (free plan cleanup not needed)
-    await deleteDoc(doc(db,'users',currentUser.uid,'entries',id));
-    entries=entries.filter(e=>e._id!==id);
-    renderHistorial();
-  };
-
-  function renderResumen() {
-    const container = document.getElementById('resumenContent');
-    const total=entries.length;
-    const convulsiones=entries.filter(e=>e.sintomas&&e.sintomas.some(s=>s.includes('Convulsión'))).length;
-    const graves=entries.filter(e=>e.severidad==='grave').length;
-    const conFotos=entries.filter(e=>e.fotos&&e.fotos.length>0).length;
-    const hoy=new Date().toISOString().split('T')[0];
-    const hoyEntradas=entries.filter(e=>e.fecha===hoy);
-    container.innerHTML=`
-      <div class="today-badge">📅 ${new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})}</div>
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Total entradas</div></div>
-        <div class="stat-card"><div class="stat-number" style="color:var(--danger)">${convulsiones}</div><div class="stat-label">Convulsiones</div></div>
-        <div class="stat-card"><div class="stat-number" style="color:var(--warning)">${graves}</div><div class="stat-label">Episodios graves</div></div>
-        <div class="stat-card"><div class="stat-number" style="color:var(--moss)">${conFotos}</div><div class="stat-label">Con fotos</div></div>
-      </div>
-      ${hoyEntradas.length>0?`<div class="card"><div class="card-title"><span>☀️</span> Hoy</div>${hoyEntradas.map(e=>`<div style="padding:8px 0;border-bottom:1px solid var(--warm)"><div style="font-size:0.82rem;font-weight:500">${e.hora||'Sin hora'}${e.temperatura?' · 🌡️'+e.temperatura+'°C':''}${e.duracion?' · ⏱️'+e.duracion:''}</div>${e.sintomas&&e.sintomas.length?'<div style="font-size:0.75rem;color:var(--soft)">'+e.sintomas.join(', ')+'</div>':''}</div>`).join('')}</div>`:''}
+        ${e.fotos&&e.fotos.length?'<div class='entry-photos">'+e.fotos.map((f,fi)=>{
+          const delBtn = isOwner ? '<button type="button" onclick="eliminarFoto(\''+e._id+'\','+fi+')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center">✕</button>' : '';
+          return '<div style="position:relative;flex-shrink:0"><img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')">'+delBtn+'</div>';
+        }).join('')+'</div>':''}</div>`).join('')}</div>`:''}
       <div class="card"><div class="card-title"><span>💊</span> Recordatorios</div>
         <div style="font-size:0.82rem;line-height:2.2;color:var(--soft)">
           <div>🔴 <strong style="color:var(--bark)">29 mayo</strong> — Lomustina Día 1</div>
@@ -1089,7 +1058,7 @@
   }
 
   window.eliminarFoto = async (entryId, fotoIndex) => {
-    if (!isOwner) { alert('Solo la dueña puede eliminar fotos'); return; }
+    if (!isOwner) return;
     if (!confirm('¿Eliminar esta foto?')) return;
     const entry = entries.find(e => e._id === entryId);
     if (!entry) return;
