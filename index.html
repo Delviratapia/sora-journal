@@ -312,14 +312,520 @@
   let recordatorios = JSON.parse(localStorage.getItem('soraRecordatorios') || '[]');
 
   // Medicamentos veterinarios comunes
-  const MEDICAMENTOS = [
+  const MEDICAMENTOS_BASE = [
     'Prednisolona','Fenobarbital','Pregabalina (Lyrica)','Lomustina (CCNU)',
-    'Biocanis','MCT Oil','Omega 3','Nutremin','Meloxicam','Tramadol',
-    'Amoxicilina','Metronidazol','Omeprazol','Furosemida','Enalapril',
-    'Previcox (Firocoxib)','Gabapentina','Ciclosporina','Azatioprina',
-    'Ketoconazol','Fluconazol','Metoclopramida','Maropitant (Cerenia)',
-    'Dexametasona','Vitamina B12','Zinc','Hierro','Calcio'
+    'Meloxicam','Tramadol','Amoxicilina','Metronidazol','Omeprazol',
+    'Furosemida','Enalapril','Previcox (Firocoxib)','Gabapentina',
+    'Ciclosporina','Azatioprina','Ketoconazol','Fluconazol',
+    'Metoclopramida','Maropitant (Cerenia)','Dexametasona','Atenolol',
+    'Espirolactona','Cefadroxilo','Enrofloxacina','Clindamicina'
   ];
+
+  function getMedicamentos() {
+    const custom = JSON.parse(localStorage.getItem('customMeds') || '[]');
+    return [...new Set([...MEDICAMENTOS_BASE, ...custom])].sort();
+  }
+
+  function saveCustomMed(nombre) {
+    const custom = JSON.parse(localStorage.getItem('customMeds') || '[]');
+    if (!custom.includes(nombre)) {
+      custom.push(nombre);
+      localStorage.setItem('customMeds', JSON.stringify(custom));
+    }
+  }
+
+  function deleteCustomMed(nombre) {
+    const custom = JSON.parse(localStorage.getItem('customMeds') || '[]');
+    const filtered = custom.filter(m => m !== nombre);
+    localStorage.setItem('customMeds', JSON.stringify(filtered));
+  }
+
+  // Contraindicaciones conocidas
+  const CONTRAINDICACIONES = [
+    { meds: ['Prednisolona', 'Previcox (Firocoxib)'], msg: '⚠️ Prednisolona + Previcox: riesgo de úlcera gastrointestinal. Evitar uso simultáneo.' },
+    { meds: ['Prednisolona', 'Meloxicam'], msg: '⚠️ Prednisolona + Meloxicam: combinación de corticoide + AINE. Riesgo gastrointestinal elevado.' },
+    { meds: ['Fenobarbital', 'Ketoconazol'], msg: '⚠️ Fenobarbital + Ketoconazol: puede alterar los niveles séricos de fenobarbital.' },
+    { meds: ['Fenobarbital', 'Fluconazol'], msg: '⚠️ Fenobarbital + Fluconazol: posible interacción con metabolismo hepático.' },
+    { meds: ['Lomustina (CCNU)', 'Meloxicam'], msg: '⚠️ Lomustina + AINEs: puede aumentar toxicidad renal.' },
+    { meds: ['Lomustina (CCNU)', 'Previcox (Firocoxib)'], msg: '⚠️ Lomustina + AINEs: puede aumentar toxicidad renal.' },
+  ];
+
+  const symptomPlaceholders = {
+    nauseas:'Cuántas veces, desde cuándo...', vomito:'Color, cantidad, veces...',
+    letargo:'Desde qué hora, qué tan decaída...', sin_apetito:'Comió algo, cuánto dejó...',
+    convulsion:'Duración, tipo, lado afectado...', cojera:'Qué pata, intensidad...',
+    ansiedad:'Duración, qué la generó...', fiebre:'Temperatura, desde cuándo...',
+    diarrea:'Veces, consistencia, color...', sangrado:'Dónde, cantidad...',
+    desorientacion:'Duración, comportamiento...', sin_sintomas:'Todo bien, observaciones...'
+  };
+
+  // ── AUTH ──
+  onAuthStateChanged(auth, async user => {
+    document.getElementById('loadingScreen').style.display = 'none';
+    if (user) {
+      currentUser = user;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appContent').style.display = 'block';
+      document.getElementById('userBar').textContent = '👤 ' + user.displayName;
+      resetForm();
+      await resolverAcceso();
+    } else {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('appContent').style.display = 'none';
+    }
+  });
+
+  async function resolverAcceso() {
+    ownerUid = currentUser.uid; isOwner = true;
+    try {
+      const emailNorm = currentUser.email.toLowerCase();
+      const accessDoc = await getDoc(doc(db, 'accessMap', emailNorm));
+      if (accessDoc.exists() && accessDoc.data().ownerUid !== currentUser.uid) {
+        ownerUid = accessDoc.data().ownerUid; isOwner = false;
+        document.getElementById('sharedBadge').style.display = 'inline-block';
+        document.querySelector('.tab').style.opacity = '0.4';
+        document.querySelector('.tab').style.pointerEvents = 'none';
+        document.querySelector('.tab[onclick*="ajustes"]').style.display = 'none';
+      }
+    } catch(e) { console.error(e); }
+    await cargarDatos();
+    await cargarAccesos();
+    checkRecordatoriosBanner();
+  }
+
+  async function cargarDatos() {
+    try {
+      const eSnap = await getDocs(query(collection(db,'users',ownerUid,'entries'), orderBy('fecha','desc')));
+      entries = eSnap.docs.map(d => ({...d.data(), _id: d.id}));
+      const cSnap = await getDocs(query(collection(db,'users',ownerUid,'citas'), orderBy('fecha','asc')));
+      citas = cSnap.docs.map(d => ({...d.data(), _id: d.id}));
+    } catch(e) { console.error(e); }
+  }
+
+  async function cargarAccesos() {
+    if (!isOwner) return;
+    try {
+      const aDoc = await getDoc(doc(db,'users',currentUser.uid,'config','accesos'));
+      accesos = aDoc.exists() ? (aDoc.data().lista || []) : [];
+    } catch(e) { console.error(e); }
+  }
+
+  // ── FORM RESET ──
+  function resetForm() {
+    const now = new Date();
+    const fechaEl = document.getElementById('fecha');
+    const horaEl = document.getElementById('hora');
+    if (fechaEl) fechaEl.value = now.toISOString().split('T')[0];
+    if (horaEl) horaEl.value = now.toTimeString().slice(0,5);
+    const cicloEl = document.getElementById('ciclo');
+    if (cicloEl) cicloEl.value = '';
+    document.getElementById('bloques').innerHTML = '';
+    document.getElementById('contraindicacionAlert').innerHTML = '';
+    document.getElementById('severidadBlock').style.display = 'none';
+    document.getElementById('btnGuardar').textContent = '💾 Guardar entrada';
+    document.getElementById('btnCancelarEdicion').style.display = 'none';
+    document.getElementById('editBanner').style.display = 'none';
+    // Show all add buttons
+    ['btnAddTemp','btnAddMed','btnAddSintomas','btnAddNotas','btnAddFotos'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    });
+    currentPhotos = []; selectedSymptoms = []; selectedSev = ''; symptomDetails = {};
+    medicamentosSeleccionados = []; editingEntryId = null;
+  }
+
+  // ── BLOQUES COLAPSABLES ──
+  window.addBloque = (tipo) => {
+    const container = document.getElementById('bloques');
+    const id = 'bloque_' + tipo + '_' + Date.now();
+    const div = document.createElement('div');
+    div.className = 'collapsible-block';
+    div.id = id;
+
+    let inner = '';
+    if (tipo === 'temperatura') {
+      inner = `
+        <div class="collapsible-header">
+          <span class="collapsible-title">🌡️ Temperatura</span>
+          <button type="button" class="btn-remove-block" onclick="removeBloque('${id}','temperatura')">✕</button>
+        </div>
+        <div id="tomasTemp_${id}">
+          <div class="toma-temp">
+            <div class="row-2">
+              <div>
+                <label>Temperatura (°C)</label>
+                <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:white;margin-bottom:4px;">
+                <div class="temp-indicator"></div>
+              </div>
+              <div>
+                <label>Hora</label>
+                <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:white;margin-bottom:12px;">
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" onclick="addTomaTemp('tomasTemp_${id}')" style="background:none;border:1.5px dashed #ddd5c8;color:var(--soft);font-size:0.78rem;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%">+ Agregar toma</button>`;
+      document.getElementById('btnAddTemp').style.display = 'none';
+    } else if (tipo === 'medicamento') {
+      const recentMeds = JSON.parse(localStorage.getItem('recentMeds') || '[]');
+      const customMeds = JSON.parse(localStorage.getItem('customMeds') || '[]');
+      let listHtml = '';
+      if (recentMeds.length > 0) {
+        listHtml += '<div class="med-item-section">Recientes</div>';
+        recentMeds.slice(0,3).forEach(m => {
+          listHtml += '<div class="med-item recent" onclick="selectMed(\'' + m + '\',\'' + id + '\')">' + m + '</div>';
+        });
+      }
+      if (customMeds.length > 0) {
+        listHtml += '<div class="med-item-section">Mis medicamentos</div>';
+        customMeds.forEach(m => {
+          listHtml += '<div class="med-item" style="display:flex;justify-content:space-between;align-items:center"><span onclick="selectMed(\'' + m + '\',\'' + id + '\')" style="flex:1;cursor:pointer">' + m + '</span><button type="button" onclick="eliminarMedPersonal(\'' + m + '\',\'' + id + '\')" style="background:none;border:none;color:var(--danger);cursor:pointer;padding:0 6px;font-size:1rem">✕</button></div>';
+        });
+      }
+      listHtml += '<div class="med-item-section">Lista general</div>';
+      getMedicamentos().forEach(m => {
+        listHtml += '<div class="med-item" onclick="selectMed(\'' + m + '\',\'' + id + '\')">' + m + '</div>';
+      });
+      listHtml += '<div class="med-item" style="color:var(--terra);font-weight:500" onclick="selectMed(\'OTRO\',\'' + id + '\')">+ Agregar nuevo medicamento...</div>';s">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sora — Diario de Salud</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf6f0; --warm: #f0e8d8; --bark: #3d2b1f;
+    --moss: #4a6741; --terra: #c4622d; --gold: #d4a843;
+    --soft: #8b7355; --light-moss: #e8f0e5;
+    --danger: #c0392b; --warning: #e67e22;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--cream); font-family:'DM Sans',sans-serif; color:var(--bark); min-height:100vh; }
+  header { background:var(--bark); padding:16px 24px 12px; text-align:center; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(61,43,31,0.3); }
+  header h1 { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--gold); }
+  header p { font-size:0.72rem; color:#a89070; margin-top:2px; }
+  .user-bar { font-size:0.7rem; color:#c8a870; margin-top:4px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-signout { background:none; border:1px solid #c8a870; color:#c8a870; font-size:0.65rem; padding:2px 8px; border-radius:10px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .tabs { display:flex; background:var(--warm); border-bottom:2px solid #e0d4c0; overflow-x:auto; }
+  .tab { flex:1; min-width:55px; padding:11px 4px; text-align:center; font-size:0.68rem; font-weight:500; color:var(--soft); cursor:pointer; border:none; background:none; transition:all 0.2s; border-bottom:3px solid transparent; margin-bottom:-2px; white-space:nowrap; }
+  .tab.active { color:var(--terra); border-bottom-color:var(--terra); background:var(--cream); }
+  .tab-content { display:none; padding:16px; }
+  .tab-content.active { display:block; }
+  .card { background:white; border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 8px rgba(61,43,31,0.08); border:1px solid #ede5d8; }
+  .card-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--bark); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  label { display:block; font-size:0.75rem; font-weight:500; color:var(--soft); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.06em; }
+  input[type="text"], input[type="date"], input[type="time"], input[type="email"], input[type="number"], textarea, select {
+    width:100%; padding:10px 14px; border:1.5px solid #ddd5c8; border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:0.88rem; color:var(--bark);
+    background:var(--cream); margin-bottom:12px; transition:border-color 0.2s; -webkit-appearance:none;
+  }
+  input:focus, textarea:focus, select:focus { outline:none; border-color:var(--terra); background:white; }
+  textarea { min-height:80px; resize:vertical; }
+  .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .btn-primary { width:100%; padding:14px; background:var(--terra); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+  .btn-primary:hover { background:#a8531f; }
+  .btn-add { display:flex; align-items:center; gap:8px; padding:10px 16px; background:var(--cream); color:var(--terra); border:1.5px dashed var(--terra); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; width:100%; margin-bottom:12px; transition:all 0.2s; }
+  .btn-add:hover { background:#fff5f0; }
+  .collapsible-block { background:var(--cream); border:1.5px solid #ddd5c8; border-radius:12px; padding:14px; margin-bottom:12px; }
+  .collapsible-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .collapsible-title { font-size:0.82rem; font-weight:600; color:var(--bark); }
+  .btn-remove-block { background:none; border:none; color:var(--danger); cursor:pointer; font-size:1rem; padding:2px 6px; border-radius:6px; }
+  .symptom-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px; }
+  .symptom-btn { padding:9px 10px; border:1.5px solid #ddd5c8; border-radius:10px; background:white; font-size:0.78rem; color:var(--soft); cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .symptom-btn.selected { background:var(--terra); border-color:var(--terra); color:white; font-weight:500; }
+  .severity { display:flex; gap:8px; margin-bottom:12px; }
+  .sev-btn { flex:1; padding:8px; border-radius:10px; border:1.5px solid #ddd5c8; background:white; font-size:0.78rem; font-weight:500; cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .sev-btn[data-sev="leve"].selected { background:var(--moss); border-color:var(--moss); color:white; }
+  .sev-btn[data-sev="moderado"].selected { background:var(--warning); border-color:var(--warning); color:white; }
+  .sev-btn[data-sev="grave"].selected { background:var(--danger); border-color:var(--danger); color:white; }
+  .temp-indicator { font-size:0.75rem; height:18px; font-weight:500; margin-bottom:8px; }
+  .photo-previews { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .photo-preview { position:relative; width:72px; height:72px; border-radius:10px; overflow:hidden; border:2px solid #ddd5c8; }
+  .photo-preview img { width:100%; height:100%; object-fit:cover; }
+  .photo-preview .remove-photo { position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .filter-bar { display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px; }
+  .filter-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #ddd5c8; background:var(--cream); font-size:0.75rem; color:var(--soft); cursor:pointer; white-space:nowrap; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
+  .filter-btn.active { background:var(--bark); border-color:var(--bark); color:white; }
+  .entry-card { background:white; border-radius:14px; margin-bottom:12px; overflow:hidden; box-shadow:0 2px 8px rgba(61,43,31,0.07); border:1px solid #ede5d8; }
+  .entry-header { padding:14px 16px 10px; display:flex; justify-content:space-between; align-items:flex-start; }
+  .entry-date { font-family:'Playfair Display',serif; font-size:0.95rem; color:var(--bark); }
+  .entry-time { font-size:0.72rem; color:var(--soft); margin-top:2px; }
+  .badge { padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:500; }
+  .badge-leve { background:var(--light-moss); color:var(--moss); }
+  .badge-moderado { background:#fef3e2; color:var(--warning); }
+  .badge-grave { background:#fde8e8; color:var(--danger); }
+  .badge-normal { background:var(--light-moss); color:var(--moss); }
+  .entry-section { padding:0 16px 8px; font-size:0.82rem; color:var(--soft); }
+  .entry-meds { padding:0 16px 8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .med-tag { background:#e8f0e5; color:#4a6741; padding:3px 9px; border-radius:20px; font-size:0.72rem; }
+  .entry-symptoms { padding:0 16px 8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .symptom-tag { background:var(--warm); padding:3px 9px; border-radius:20px; font-size:0.72rem; color:var(--soft); }
+  .entry-notes { padding:0 16px 12px; font-size:0.82rem; color:#6b5a46; line-height:1.5; font-style:italic; }
+  .entry-photos { display:flex; gap:6px; padding:0 16px 12px; overflow-x:auto; }
+  .entry-photo { width:64px; height:64px; border-radius:8px; object-fit:cover; flex-shrink:0; cursor:pointer; border:2px solid #ede5d8; }
+  .entry-footer { padding:8px 16px; background:var(--warm); display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .btn-delete { background:none; border:none; color:#c0392b; font-size:0.72rem; cursor:pointer; padding:4px 8px; border-radius:6px; font-family:'DM Sans',sans-serif; }
+  .btn-edit { background:none; border:1.5px solid #ddd5c8; color:var(--soft); font-size:0.72rem; cursor:pointer; padding:4px 10px; border-radius:6px; font-family:'DM Sans',sans-serif; }
+  .empty-state { text-align:center; padding:40px 20px; color:var(--soft); }
+  .empty-state .icon { font-size:3rem; margin-bottom:12px; }
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .stat-card { background:white; border-radius:14px; padding:16px; text-align:center; border:1px solid #ede5d8; }
+  .stat-number { font-family:'Playfair Display',serif; font-size:2rem; color:var(--terra); line-height:1; }
+  .stat-label { font-size:0.72rem; color:var(--soft); margin-top:4px; text-transform:uppercase; letter-spacing:0.05em; }
+  .today-badge { background:var(--bark); color:var(--gold); font-size:0.72rem; padding:3px 10px; border-radius:20px; display:inline-block; margin-bottom:12px; font-family:'Playfair Display',serif; font-style:italic; }
+  .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999; justify-content:center; align-items:center; padding:20px; }
+  .modal.open { display:flex; }
+  .modal img { max-width:100%; max-height:80vh; border-radius:12px; }
+  .modal-close { position:absolute; top:16px; right:16px; background:white; border:none; border-radius:50%; width:36px; height:36px; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:32px 24px; text-align:center; background:var(--cream); }
+  .login-screen h2 { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--bark); margin-bottom:8px; }
+  .login-screen p { color:var(--soft); font-size:0.9rem; margin-bottom:32px; line-height:1.6; }
+  .btn-google { display:flex; align-items:center; gap:12px; padding:14px 28px; background:white; border:1.5px solid #ddd5c8; border-radius:14px; font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:500; cursor:pointer; color:var(--bark); box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:all 0.2s; }
+  .loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; color:var(--soft); gap:12px; }
+  .spinner { width:36px; height:36px; border:3px solid #ddd5c8; border-top-color:var(--terra); border-radius:50%; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .shared-badge { background:#e8f0e5; color:#4a6741; font-size:0.7rem; padding:2px 8px; border-radius:10px; display:inline-block; margin-bottom:8px; }
+  .correo-tag { display:flex; align-items:center; justify-content:space-between; background:var(--warm); padding:8px 12px; border-radius:10px; margin-bottom:8px; font-size:0.82rem; }
+  .correo-tag button { background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.9rem; }
+  .risk-banner { display:none; background:#c0392b; color:white; padding:10px 16px; font-size:0.82rem; font-weight:500; text-align:center; line-height:1.5; }
+  .risk-banner.warning { background:#e67e22; }
+  .med-search { position:relative; }
+  .med-list { background:white; border:1.5px solid #ddd5c8; border-radius:10px; max-height:200px; overflow-y:auto; margin-bottom:12px; }
+  .med-item { padding:10px 14px; font-size:0.85rem; cursor:pointer; border-bottom:1px solid #f0e8d8; color:var(--bark); }
+  .med-item:hover { background:var(--warm); }
+  .med-item.recent { color:var(--terra); font-weight:500; }
+  .med-item-section { padding:6px 14px; font-size:0.7rem; font-weight:600; color:var(--soft); text-transform:uppercase; letter-spacing:0.06em; background:var(--cream); }
+  .med-selected { display:flex; align-items:center; gap:8px; background:var(--light-moss); padding:8px 12px; border-radius:10px; margin-bottom:8px; }
+  .med-selected-name { font-size:0.82rem; font-weight:500; color:var(--bark); flex:1; }
+  .contraindication-alert { background:#fde8e8; border:1.5px solid #e74c3c; border-radius:10px; padding:12px; margin-bottom:12px; font-size:0.82rem; color:#c0392b; }
+  .edit-banner { background:var(--warning); color:white; padding:10px 16px; text-align:center; font-size:0.82rem; font-weight:500; display:none; }
+</style>
+</head>
+<body>
+
+<div class="loading" id="loadingScreen"><div class="spinner"></div><p>Cargando...</p></div>
+
+<div class="login-screen" id="loginScreen" style="display:none">
+  <div style="font-size:4rem;margin-bottom:16px">🐾</div>
+  <h2>Sora — Diario de Salud</h2>
+  <p>Inicia sesión con tu cuenta Google<br>para acceder desde cualquier dispositivo.</p>
+  <button class="btn-google" onclick="loginGoogle()">
+    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    Continuar con Google
+  </button>
+</div>
+
+<div id="appContent" style="display:none">
+  <div class="risk-banner" id="riskBanner" onclick="irAAvisos()" style="cursor:pointer" title="Click para ver avisos"></div>
+  <div class="edit-banner" id="editBanner">✏️ Modo edición — modificando entrada existente</div>
+  <header>
+    <h1>🐾 Sora — Diario de Salud</h1>
+    <p>Pastor Suizo · MUO · Lomustina</p>
+    <div class="user-bar">
+      <span id="userBar"></span>
+      <button class="btn-signout" onclick="cerrarSesion()">Salir</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button type="button" class="tab active" onclick="showTab('nueva',this)">✏️ Nueva</button>
+    <button type="button" class="tab" onclick="showTab('historial',this)">📋 Historial</button>
+    <button type="button" class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
+    <button type="button" class="tab" onclick="showTab('citas',this)">🏥 Citas</button>
+    <button type="button" class="tab" onclick="showTab('recordatorios',this)">🔔 Avisos</button>
+    <button type="button" class="tab" onclick="showTab('ajustes',this)">⚙️ Más</button>
+  </div>
+
+  <!-- NUEVA ENTRADA -->
+  <div id="nueva" class="tab-content active">
+    <div class="card">
+      <div class="card-title"><span>📅</span> Fecha y hora</div>
+      <div class="row-2">
+        <div><label>Fecha</label><input type="date" id="fecha"></div>
+        <div><label>Hora</label><input type="time" id="hora"></div>
+      </div>
+      <label>Ciclo de lomustina</label>
+      <select id="ciclo">
+        <option value="">-- Seleccionar --</option>
+        <option>Ciclo 1 - Día 1 (29 mayo)</option>
+        <option>Ciclo 1 - Día 2 (30 mayo)</option>
+        <option>Ciclo 1 - Día 3 (31 mayo)</option>
+        <option>Ciclo 2 - Semana 1 (7 jun)</option>
+        <option>Ciclo 2 - Semana 2 (14 jun)</option>
+        <option>Ciclo 2 - Semana 3 (21 jun)</option>
+        <option>Día de monitoreo</option>
+      </select>
+    </div>
+
+    <!-- Bloques colapsables -->
+    <div id="bloques"></div>
+    <div id="contraindicacionAlert"></div>
+
+    <!-- Botones para añadir bloques -->
+    <div class="card" style="padding:14px">
+      <div style="font-size:0.75rem;font-weight:500;color:var(--soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">Añadir información</div>
+      <button type="button" class="btn-add" id="btnAddTemp" onclick="addBloque('temperatura')">🌡️ + Temperatura</button>
+      <button type="button" class="btn-add" id="btnAddMed" onclick="addBloque('medicamento')">💊 + Medicamento</button>
+      <button type="button" class="btn-add" id="btnAddSintomas" onclick="addBloque('sintomas')">🔍 + Síntomas</button>
+      <button type="button" class="btn-add" id="btnAddNotas" onclick="addBloque('notas')">📝 + Notas</button>
+      <button type="button" class="btn-add" id="btnAddFotos" onclick="addBloque('fotos')">📷 + Fotos</button>
+    </div>
+
+    <div id="severidadBlock" style="display:none" class="card">
+      <div class="card-title"><span>⚠️</span> Severidad general</div>
+      <div class="severity">
+        <button type="button" class="sev-btn" data-sev="leve" onclick="selectSev(this)">🟢 Leve</button>
+        <button type="button" class="sev-btn" data-sev="moderado" onclick="selectSev(this)">🟡 Moderado</button>
+        <button type="button" class="sev-btn" data-sev="grave" onclick="selectSev(this)">🔴 Grave</button>
+      </div>
+    </div>
+
+    <button type="button" class="btn-primary" id="btnGuardar" onclick="guardarEntrada()">💾 Guardar entrada</button>
+    <button type="button" id="btnCancelarEdicion" onclick="cancelarEdicion()" style="display:none;width:100%;padding:12px;background:white;color:var(--soft);border:1.5px solid #ddd5c8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;margin-top:8px">✕ Cancelar edición</button>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div id="historial" class="tab-content">
+    <div id="sharedBadge" style="display:none" class="shared-badge">👁️ Viendo datos de Dominique</div>
+    <div class="filter-bar">
+      <button type="button" class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
+      <button type="button" class="filter-btn" onclick="filtrar('grave',this)">🔴 Graves</button>
+      <button type="button" class="filter-btn" onclick="filtrar('convulsion',this)">⚡ Convulsiones</button>
+      <button type="button" class="filter-btn" onclick="filtrar('fiebre',this)">🌡️ Fiebre</button>
+      <button type="button" class="filter-btn" onclick="filtrar('foto',this)">📷 Con foto</button>
+    </div>
+    <div id="listaEntradas"></div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div id="resumen" class="tab-content"><div id="resumenContent"></div></div>
+
+  <!-- CITAS -->
+  <div id="citas" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span>🏥</span> Nueva cita médica</div>
+      <div class="row-2">
+        <div><label>Fecha</label><input type="date" id="citaFecha"></div>
+        <div><label>Hora</label><input type="time" id="citaHora"></div>
+      </div>
+      <label>Veterinario / Especialista</label>
+      <input type="text" id="citaVet" placeholder="ej. Dr. Matiz - MoviTeam Vet">
+      <label>Motivo de la cita</label>
+      <input type="text" id="citaMotivo" placeholder="ej. Control neurólogo...">
+      <label>Notas / Preguntas</label>
+      <textarea id="citaNotas" placeholder="Preguntas que quieres hacer..." style="min-height:60px"></textarea>
+      <button type="button" class="btn-primary" onclick="guardarCita()">💾 Guardar cita</button>
+    </div>
+    <div id="listaCitas"></div>
+  </div>
+
+  <!-- RECORDATORIOS -->
+  <div id="recordatorios" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span>🔔</span> Nuevo recordatorio</div>
+      <div class="row-2">
+        <div><label>Fecha inicio</label><input type="date" id="recFechaInicio"></div>
+        <div><label>Fecha fin <span style="font-size:0.7rem;color:#aaa">(opcional)</span></label><input type="date" id="recFechaFin"></div>
+      </div>
+      <label>Hora</label><input type="time" id="recHora">
+      <label>Mensaje</label><input type="text" id="recMensaje" placeholder="ej. Temperatura Sora noche">
+      <button type="button" class="btn-primary" onclick="guardarRecordatorio()">💾 Guardar recordatorio</button>
+    </div>
+    <div class="filter-bar" style="margin-top:12px">
+      <button type="button" class="filter-btn active" onclick="filtrarRec('todos',this)">Todos</button>
+      <button type="button" class="filter-btn" onclick="filtrarRec('proximos',this)">🔔 Próximos</button>
+      <button type="button" class="filter-btn" onclick="filtrarRec('caducados',this)">⚠️ Caducados</button>
+      <button type="button" class="filter-btn" onclick="filtrarRec('completados',this)">✅ Completados</button>
+    </div>
+    <div id="listaRecordatorios"></div>
+  </div>
+
+  <!-- AJUSTES -->
+  <div id="ajustes" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span>👥</span> Compartir mis datos</div>
+      <p style="font-size:0.82rem;color:var(--soft);margin-bottom:14px;line-height:1.6">Solo pueden ver, no editar.</p>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <input type="email" id="correoCompartir" placeholder="correo@gmail.com" style="margin-bottom:0;flex:1">
+        <button type="button" onclick="agregarAcceso()" style="padding:10px 16px;background:var(--terra);color:white;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">+ Agregar</button>
+      </div>
+      <div id="listaAccesos"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>💾</span> Respaldo</div>
+      <button type="button" class="btn-primary" onclick="exportarDatos()" style="margin-bottom:10px">📤 Exportar respaldo</button>
+      <label style="display:block;width:100%;padding:12px;background:white;color:var(--bark);border:1.5px solid #ddd5c8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;text-align:center;text-transform:none;letter-spacing:0;margin:0;">
+        📥 Importar respaldo
+        <input type="file" accept=".json" onchange="importarDatos(this)" style="display:none">
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="photoModal" onclick="closeModal()">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <img id="modalImg" src="" alt="">
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBt8tW5Y4yMWizLhczJCUmB28udf3sO3X4",
+    authDomain: "sora-journal.firebaseapp.com",
+    projectId: "sora-journal",
+    storageBucket: "sora-journal.firebasestorage.app",
+    messagingSenderId: "962627650872",
+    appId: "1:962627650872:web:09d1f49dd7e152930e2dcd"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const CLOUDINARY_CLOUD = 'dwumxfhbi';
+  const CLOUDINARY_PRESET = 'sora_photos';
+
+  let currentUser = null, ownerUid = null, isOwner = true;
+  let entries = [], citas = [], accesos = [];
+  let currentPhotos = [], selectedSymptoms = [], selectedSev = '', symptomDetails = {};
+  let activeFilter = 'todos';
+  let activeRecFilter = 'todos';
+  let editingEntryId = null;
+  let medicamentosSeleccionados = [];
+  let recordatorios = JSON.parse(localStorage.getItem('soraRecordatorios') || '[]');
+
+  // Medicamentos veterinarios comunes
+  const MEDICAMENTOS_BASE = [
+    'Prednisolona','Fenobarbital','Pregabalina (Lyrica)','Lomustina (CCNU)',
+    'Meloxicam','Tramadol','Amoxicilina','Metronidazol','Omeprazol',
+    'Furosemida','Enalapril','Previcox (Firocoxib)','Gabapentina',
+    'Ciclosporina','Azatioprina','Ketoconazol','Fluconazol',
+    'Metoclopramida','Maropitant (Cerenia)','Dexametasona','Atenolol',
+    'Espirolactona','Cefadroxilo','Enrofloxacina','Clindamicina'
+  ];
+
+  function getMedicamentos() {
+    const custom = JSON.parse(localStorage.getItem('customMeds') || '[]');
+    return [...new Set([...MEDICAMENTOS_BASE, ...custom])].sort();
+  }
+
+  function saveCustomMed(nombre) {
+    const custom = JSON.parse(localStorage.getItem('customMeds') || '[]');
+    if (!custom.includes(nombre)) {
+      custom.push(nombre);
+      localStorage.setItem('customMeds', JSON.stringify(custom));
+    }
+  }
+
+  function deleteCustomMed(nombre) {
+    const custom = JSON.parse(localStorage.getItem('customMeds') || '[]');
+    const filtered = custom.filter(m => m !== nombre);
+    localStorage.setItem('customMeds', JSON.stringify(filtered));
+  }
 
   // Contraindicaciones conocidas
   const CONTRAINDICACIONES = [
@@ -573,11 +1079,20 @@
     sections.forEach(s => s.style.display = q ? 'none' : 'block');
   };
 
+  window.eliminarMedPersonal = (nombre, bloqueId) => {
+    if (!confirm('¿Eliminar "' + nombre + '" de tu lista?')) return;
+    deleteCustomMed(nombre);
+    // Refresh the med list
+    removeBloque(bloqueId, 'medicamento');
+    addBloque('medicamento');
+  };
+
   window.selectMed = (med, bloqueId) => {
     if (med === 'OTRO') {
       const nombre = prompt('Nombre del medicamento:');
       if (!nombre) return;
       med = nombre.trim();
+      saveCustomMed(med);
     }
     const container = document.getElementById('medSelected_' + bloqueId);
     const existingIdx = medicamentosSeleccionados.findIndex(m => m.bloqueId === bloqueId);
