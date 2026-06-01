@@ -27,28 +27,36 @@
   .card { background:white; border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 8px rgba(61,43,31,0.08); border:1px solid #ede5d8; }
   .card-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--bark); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
   label { display:block; font-size:0.75rem; font-weight:500; color:var(--soft); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.06em; }
-  input[type="text"], input[type="date"], input[type="time"], input[type="email"], textarea, select { width:100%; padding:10px 14px; border:1.5px solid #ddd5c8; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:0.88rem; color:var(--bark); background:var(--cream); margin-bottom:12px; transition:border-color 0.2s; -webkit-appearance:none; }
+  input[type="text"], input[type="date"], input[type="time"], input[type="email"], input[type="number"], textarea, select {
+    width:100%; padding:10px 14px; border:1.5px solid #ddd5c8; border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:0.88rem; color:var(--bark);
+    background:var(--cream); margin-bottom:12px; transition:border-color 0.2s; -webkit-appearance:none;
+  }
   input:focus, textarea:focus, select:focus { outline:none; border-color:var(--terra); background:white; }
   textarea { min-height:80px; resize:vertical; }
   .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .btn-primary { width:100%; padding:14px; background:var(--terra); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+  .btn-primary:hover { background:#a8531f; }
+  .btn-add { display:flex; align-items:center; gap:8px; padding:10px 16px; background:var(--cream); color:var(--terra); border:1.5px dashed var(--terra); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; width:100%; margin-bottom:12px; transition:all 0.2s; }
+  .btn-add:hover { background:#fff5f0; }
+  .collapsible-block { background:var(--cream); border:1.5px solid #ddd5c8; border-radius:12px; padding:14px; margin-bottom:12px; }
+  .collapsible-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .collapsible-title { font-size:0.82rem; font-weight:600; color:var(--bark); }
+  .btn-remove-block { background:none; border:none; color:var(--danger); cursor:pointer; font-size:1rem; padding:2px 6px; border-radius:6px; }
   .symptom-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px; }
-  .symptom-btn { padding:9px 10px; border:1.5px solid #ddd5c8; border-radius:10px; background:var(--cream); font-size:0.78rem; color:var(--soft); cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .symptom-btn { padding:9px 10px; border:1.5px solid #ddd5c8; border-radius:10px; background:white; font-size:0.78rem; color:var(--soft); cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
   .symptom-btn.selected { background:var(--terra); border-color:var(--terra); color:white; font-weight:500; }
   .severity { display:flex; gap:8px; margin-bottom:12px; }
-  .sev-btn { flex:1; padding:8px; border-radius:10px; border:1.5px solid #ddd5c8; background:var(--cream); font-size:0.78rem; font-weight:500; cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .sev-btn { flex:1; padding:8px; border-radius:10px; border:1.5px solid #ddd5c8; background:white; font-size:0.78rem; font-weight:500; cursor:pointer; text-align:center; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
   .sev-btn[data-sev="leve"].selected { background:var(--moss); border-color:var(--moss); color:white; }
   .sev-btn[data-sev="moderado"].selected { background:var(--warning); border-color:var(--warning); color:white; }
   .sev-btn[data-sev="grave"].selected { background:var(--danger); border-color:var(--danger); color:white; }
-  .temp-indicator { font-size:0.75rem; margin-top:-8px; margin-bottom:10px; height:18px; font-weight:500; }
-  .photo-upload { border:2px dashed #ddd5c8; border-radius:12px; padding:20px; text-align:center; cursor:pointer; margin-bottom:12px; background:var(--cream); }
-  .photo-upload p { font-size:0.82rem; color:var(--soft); margin-top:6px; }
-  .photo-upload .icon { font-size:1.8rem; }
-  .photo-previews { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .temp-indicator { font-size:0.75rem; height:18px; font-weight:500; margin-bottom:8px; }
+  .photo-previews { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
   .photo-preview { position:relative; width:72px; height:72px; border-radius:10px; overflow:hidden; border:2px solid #ddd5c8; }
   .photo-preview img { width:100%; height:100%; object-fit:cover; }
   .photo-preview .remove-photo { position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  .btn-primary { width:100%; padding:14px; background:var(--terra); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
-  .btn-primary:hover { background:#a8531f; }
   .filter-bar { display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px; }
   .filter-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #ddd5c8; background:var(--cream); font-size:0.75rem; color:var(--soft); cursor:pointer; white-space:nowrap; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
   .filter-btn.active { background:var(--bark); border-color:var(--bark); color:white; }
@@ -61,15 +69,17 @@
   .badge-moderado { background:#fef3e2; color:var(--warning); }
   .badge-grave { background:#fde8e8; color:var(--danger); }
   .badge-normal { background:var(--light-moss); color:var(--moss); }
+  .entry-section { padding:0 16px 8px; font-size:0.82rem; color:var(--soft); }
+  .entry-meds { padding:0 16px 8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .med-tag { background:#e8f0e5; color:#4a6741; padding:3px 9px; border-radius:20px; font-size:0.72rem; }
   .entry-symptoms { padding:0 16px 8px; display:flex; flex-wrap:wrap; gap:6px; }
   .symptom-tag { background:var(--warm); padding:3px 9px; border-radius:20px; font-size:0.72rem; color:var(--soft); }
-  .entry-meta { padding:0 16px 8px; font-size:0.78rem; color:var(--soft); display:flex; gap:16px; flex-wrap:wrap; }
   .entry-notes { padding:0 16px 12px; font-size:0.82rem; color:#6b5a46; line-height:1.5; font-style:italic; }
   .entry-photos { display:flex; gap:6px; padding:0 16px 12px; overflow-x:auto; }
   .entry-photo { width:64px; height:64px; border-radius:8px; object-fit:cover; flex-shrink:0; cursor:pointer; border:2px solid #ede5d8; }
-  .entry-footer { padding:8px 16px; background:var(--warm); display:flex; justify-content:space-between; align-items:center; }
-  .entry-cycle { font-size:0.72rem; color:var(--soft); }
+  .entry-footer { padding:8px 16px; background:var(--warm); display:flex; justify-content:space-between; align-items:center; gap:8px; }
   .btn-delete { background:none; border:none; color:#c0392b; font-size:0.72rem; cursor:pointer; padding:4px 8px; border-radius:6px; font-family:'DM Sans',sans-serif; }
+  .btn-edit { background:none; border:1.5px solid #ddd5c8; color:var(--soft); font-size:0.72rem; cursor:pointer; padding:4px 10px; border-radius:6px; font-family:'DM Sans',sans-serif; }
   .empty-state { text-align:center; padding:40px 20px; color:var(--soft); }
   .empty-state .icon { font-size:3rem; margin-bottom:12px; }
   .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
@@ -93,15 +103,21 @@
   .correo-tag button { background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.9rem; }
   .risk-banner { display:none; background:#c0392b; color:white; padding:10px 16px; font-size:0.82rem; font-weight:500; text-align:center; line-height:1.5; }
   .risk-banner.warning { background:#e67e22; }
-  .risk-banner.info { background:#4a6741; }
+  .med-search { position:relative; }
+  .med-list { background:white; border:1.5px solid #ddd5c8; border-radius:10px; max-height:200px; overflow-y:auto; margin-bottom:12px; }
+  .med-item { padding:10px 14px; font-size:0.85rem; cursor:pointer; border-bottom:1px solid #f0e8d8; color:var(--bark); }
+  .med-item:hover { background:var(--warm); }
+  .med-item.recent { color:var(--terra); font-weight:500; }
+  .med-item-section { padding:6px 14px; font-size:0.7rem; font-weight:600; color:var(--soft); text-transform:uppercase; letter-spacing:0.06em; background:var(--cream); }
+  .med-selected { display:flex; align-items:center; gap:8px; background:var(--light-moss); padding:8px 12px; border-radius:10px; margin-bottom:8px; }
+  .med-selected-name { font-size:0.82rem; font-weight:500; color:var(--bark); flex:1; }
+  .contraindication-alert { background:#fde8e8; border:1.5px solid #e74c3c; border-radius:10px; padding:12px; margin-bottom:12px; font-size:0.82rem; color:#c0392b; }
+  .edit-banner { background:var(--warning); color:white; padding:10px 16px; text-align:center; font-size:0.82rem; font-weight:500; display:none; }
 </style>
 </head>
 <body>
 
-<div class="loading" id="loadingScreen">
-  <div class="spinner"></div>
-  <p>Cargando...</p>
-</div>
+<div class="loading" id="loadingScreen"><div class="spinner"></div><p>Cargando...</p></div>
 
 <div class="login-screen" id="loginScreen" style="display:none">
   <div style="font-size:4rem;margin-bottom:16px">🐾</div>
@@ -114,7 +130,8 @@
 </div>
 
 <div id="appContent" style="display:none">
-  <div class="risk-banner" id="riskBanner"></div>
+  <div class="risk-banner" id="riskBanner" onclick="irAAvisos()" style="cursor:pointer" title="Click para ver avisos"></div>
+  <div class="edit-banner" id="editBanner">✏️ Modo edición — modificando entrada existente</div>
   <header>
     <h1>🐾 Sora — Diario de Salud</h1>
     <p>Pastor Suizo · MUO · Lomustina</p>
@@ -154,45 +171,22 @@
       </select>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span>🌡️</span> Temperatura
-        <button type="button" onclick="agregarTomaTemp()" style="margin-left:auto;background:var(--terra);color:white;border:none;border-radius:8px;padding:4px 10px;font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;">+ Toma</button>
-      </div>
-      <div id="tomasTemp">
-        <div class="toma-temp" data-index="0">
-          <div class="row-2">
-            <div>
-              <label>Temperatura (°C)</label>
-              <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:4px;">
-              <div class="temp-indicator" style="font-size:0.75rem;height:18px;font-weight:500;margin-bottom:8px"></div>
-            </div>
-            <div>
-              <label>Hora</label>
-              <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:12px;">
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Bloques colapsables -->
+    <div id="bloques"></div>
+    <div id="contraindicacionAlert"></div>
+
+    <!-- Botones para añadir bloques -->
+    <div class="card" style="padding:14px">
+      <div style="font-size:0.75rem;font-weight:500;color:var(--soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">Añadir información</div>
+      <button type="button" class="btn-add" id="btnAddTemp" onclick="addBloque('temperatura')">🌡️ + Temperatura</button>
+      <button type="button" class="btn-add" id="btnAddMed" onclick="addBloque('medicamento')">💊 + Medicamento</button>
+      <button type="button" class="btn-add" id="btnAddSintomas" onclick="addBloque('sintomas')">🔍 + Síntomas</button>
+      <button type="button" class="btn-add" id="btnAddNotas" onclick="addBloque('notas')">📝 + Notas</button>
+      <button type="button" class="btn-add" id="btnAddFotos" onclick="addBloque('fotos')">📷 + Fotos</button>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span>🔍</span> Síntomas observados</div>
-      <div class="symptom-grid" id="symptomGrid">
-        <button type="button" class="symptom-btn" data-key="nauseas" onclick="toggleSymptom(this)">🤢 Náuseas</button>
-        <button type="button" class="symptom-btn" data-key="vomito" onclick="toggleSymptom(this)">🤮 Vómito</button>
-        <button type="button" class="symptom-btn" data-key="letargo" onclick="toggleSymptom(this)">😴 Letargo</button>
-        <button type="button" class="symptom-btn" data-key="sin_apetito" onclick="toggleSymptom(this)">🍽️ Sin apetito</button>
-        <button type="button" class="symptom-btn" data-key="convulsion" onclick="toggleSymptom(this)">⚡ Convulsión</button>
-        <button type="button" class="symptom-btn" data-key="cojera" onclick="toggleSymptom(this)">🦵 Cojera</button>
-        <button type="button" class="symptom-btn" data-key="ansiedad" onclick="toggleSymptom(this)">😰 Ansiedad</button>
-        <button type="button" class="symptom-btn" data-key="fiebre" onclick="toggleSymptom(this)">🌡️ Fiebre</button>
-        <button type="button" class="symptom-btn" data-key="diarrea" onclick="toggleSymptom(this)">💧 Diarrea</button>
-        <button type="button" class="symptom-btn" data-key="sangrado" onclick="toggleSymptom(this)">🩸 Sangrado</button>
-        <button type="button" class="symptom-btn" data-key="desorientacion" onclick="toggleSymptom(this)">😵 Desorientación</button>
-        <button type="button" class="symptom-btn" data-key="sin_sintomas" onclick="toggleSymptom(this)">✅ Sin síntomas</button>
-      </div>
-      <div id="symptomDetails"></div>
-      <label>Severidad general</label>
+    <div id="severidadBlock" style="display:none" class="card">
+      <div class="card-title"><span>⚠️</span> Severidad general</div>
       <div class="severity">
         <button type="button" class="sev-btn" data-sev="leve" onclick="selectSev(this)">🟢 Leve</button>
         <button type="button" class="sev-btn" data-sev="moderado" onclick="selectSev(this)">🟡 Moderado</button>
@@ -200,22 +194,8 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span>📝</span> Notas</div>
-      <textarea id="notas" placeholder="Describe el comportamiento, si comió bien, ánimo..."></textarea>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span>📷</span> Fotos</div>
-      <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-        <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)" style="display:none">
-        <div class="icon">📸</div>
-        <p>Toca para agregar fotos</p>
-      </div>
-      <div class="photo-previews" id="photoPreviews"></div>
-    </div>
-
-    <button type="button" class="btn-primary" onclick="guardarEntrada()">💾 Guardar entrada</button>
+    <button type="button" class="btn-primary" id="btnGuardar" onclick="guardarEntrada()">💾 Guardar entrada</button>
+    <button type="button" id="btnCancelarEdicion" onclick="cancelarEdicion()" style="display:none;width:100%;padding:12px;background:white;color:var(--soft);border:1.5px solid #ddd5c8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;margin-top:8px">✕ Cancelar edición</button>
     <div style="height:20px"></div>
   </div>
 
@@ -233,9 +213,7 @@
   </div>
 
   <!-- RESUMEN -->
-  <div id="resumen" class="tab-content">
-    <div id="resumenContent"></div>
-  </div>
+  <div id="resumen" class="tab-content"><div id="resumenContent"></div></div>
 
   <!-- CITAS -->
   <div id="citas" class="tab-content">
@@ -248,7 +226,7 @@
       <label>Veterinario / Especialista</label>
       <input type="text" id="citaVet" placeholder="ej. Dr. Matiz - MoviTeam Vet">
       <label>Motivo de la cita</label>
-      <input type="text" id="citaMotivo" placeholder="ej. Control neurólogo, Fenobarbital sérico...">
+      <input type="text" id="citaMotivo" placeholder="ej. Control neurólogo...">
       <label>Notas / Preguntas</label>
       <textarea id="citaNotas" placeholder="Preguntas que quieres hacer..." style="min-height:60px"></textarea>
       <button type="button" class="btn-primary" onclick="guardarCita()">💾 Guardar cita</button>
@@ -264,11 +242,15 @@
         <div><label>Fecha inicio</label><input type="date" id="recFechaInicio"></div>
         <div><label>Fecha fin <span style="font-size:0.7rem;color:#aaa">(opcional)</span></label><input type="date" id="recFechaFin"></div>
       </div>
-      <label>Hora</label>
-      <input type="time" id="recHora">
-      <label>Mensaje</label>
-      <input type="text" id="recMensaje" placeholder="ej. Temperatura Sora noche">
+      <label>Hora</label><input type="time" id="recHora">
+      <label>Mensaje</label><input type="text" id="recMensaje" placeholder="ej. Temperatura Sora noche">
       <button type="button" class="btn-primary" onclick="guardarRecordatorio()">💾 Guardar recordatorio</button>
+    </div>
+    <div class="filter-bar" style="margin-top:12px">
+      <button type="button" class="filter-btn active" onclick="filtrarRec('todos',this)">Todos</button>
+      <button type="button" class="filter-btn" onclick="filtrarRec('proximos',this)">🔔 Próximos</button>
+      <button type="button" class="filter-btn" onclick="filtrarRec('caducados',this)">⚠️ Caducados</button>
+      <button type="button" class="filter-btn" onclick="filtrarRec('completados',this)">✅ Completados</button>
     </div>
     <div id="listaRecordatorios"></div>
   </div>
@@ -277,8 +259,7 @@
   <div id="ajustes" class="tab-content">
     <div class="card">
       <div class="card-title"><span>👥</span> Compartir mis datos</div>
-      <p style="font-size:0.82rem;color:var(--soft);margin-bottom:14px;line-height:1.6">Agrega el correo Gmail de personas que quieres que vean tus entradas y citas. Solo pueden ver, no editar.</p>
-      <label>Correo Gmail</label>
+      <p style="font-size:0.82rem;color:var(--soft);margin-bottom:14px;line-height:1.6">Solo pueden ver, no editar.</p>
       <div style="display:flex;gap:8px;margin-bottom:12px">
         <input type="email" id="correoCompartir" placeholder="correo@gmail.com" style="margin-bottom:0;flex:1">
         <button type="button" onclick="agregarAcceso()" style="padding:10px 16px;background:var(--terra);color:white;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">+ Agregar</button>
@@ -286,7 +267,7 @@
       <div id="listaAccesos"></div>
     </div>
     <div class="card">
-      <div class="card-title"><span>💾</span> Respaldo de datos</div>
+      <div class="card-title"><span>💾</span> Respaldo</div>
       <button type="button" class="btn-primary" onclick="exportarDatos()" style="margin-bottom:10px">📤 Exportar respaldo</button>
       <label style="display:block;width:100%;padding:12px;background:white;color:var(--bark);border:1.5px solid #ddd5c8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;text-align:center;text-transform:none;letter-spacing:0;margin:0;">
         📥 Importar respaldo
@@ -296,7 +277,6 @@
   </div>
 </div>
 
-<!-- MODAL FOTO -->
 <div class="modal" id="photoModal" onclick="closeModal()">
   <button class="modal-close" onclick="closeModal()">✕</button>
   <img id="modalImg" src="" alt="">
@@ -319,38 +299,48 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-
   const CLOUDINARY_CLOUD = 'dwumxfhbi';
   const CLOUDINARY_PRESET = 'sora_photos';
 
-  let currentUser = null;
-  let ownerUid = null;
-  let entries = [];
-  let citas = [];
-  let accesos = [];
-  let currentPhotos = [];
-  let selectedSymptoms = [];
-  let selectedSev = '';
+  let currentUser = null, ownerUid = null, isOwner = true;
+  let entries = [], citas = [], accesos = [];
+  let currentPhotos = [], selectedSymptoms = [], selectedSev = '', symptomDetails = {};
   let activeFilter = 'todos';
-  let isOwner = true;
-  let symptomDetails = {};
+  let activeRecFilter = 'todos';
+  let editingEntryId = null;
+  let medicamentosSeleccionados = [];
   let recordatorios = JSON.parse(localStorage.getItem('soraRecordatorios') || '[]');
 
+  // Medicamentos veterinarios comunes
+  const MEDICAMENTOS = [
+    'Prednisolona','Fenobarbital','Pregabalina (Lyrica)','Lomustina (CCNU)',
+    'Biocanis','MCT Oil','Omega 3','Nutremin','Meloxicam','Tramadol',
+    'Amoxicilina','Metronidazol','Omeprazol','Furosemida','Enalapril',
+    'Previcox (Firocoxib)','Gabapentina','Ciclosporina','Azatioprina',
+    'Ketoconazol','Fluconazol','Metoclopramida','Maropitant (Cerenia)',
+    'Dexametasona','Vitamina B12','Zinc','Hierro','Calcio'
+  ];
+
+  // Contraindicaciones conocidas
+  const CONTRAINDICACIONES = [
+    { meds: ['Prednisolona', 'Previcox (Firocoxib)'], msg: '⚠️ Prednisolona + Previcox: riesgo de úlcera gastrointestinal. Evitar uso simultáneo.' },
+    { meds: ['Prednisolona', 'Meloxicam'], msg: '⚠️ Prednisolona + Meloxicam: combinación de corticoide + AINE. Riesgo gastrointestinal elevado.' },
+    { meds: ['Fenobarbital', 'Ketoconazol'], msg: '⚠️ Fenobarbital + Ketoconazol: puede alterar los niveles séricos de fenobarbital.' },
+    { meds: ['Fenobarbital', 'Fluconazol'], msg: '⚠️ Fenobarbital + Fluconazol: posible interacción con metabolismo hepático.' },
+    { meds: ['Lomustina (CCNU)', 'Meloxicam'], msg: '⚠️ Lomustina + AINEs: puede aumentar toxicidad renal.' },
+    { meds: ['Lomustina (CCNU)', 'Previcox (Firocoxib)'], msg: '⚠️ Lomustina + AINEs: puede aumentar toxicidad renal.' },
+  ];
+
   const symptomPlaceholders = {
-    nauseas: 'Cuántas veces, desde cuándo...',
-    vomito: 'Color, cantidad, veces...',
-    letargo: 'Desde qué hora, qué tan decaída...',
-    sin_apetito: 'Comió algo, cuánto dejó...',
-    convulsion: 'Duración, tipo, lado afectado...',
-    cojera: 'Qué pata, intensidad...',
-    ansiedad: 'Duración, qué la generó...',
-    fiebre: 'Temperatura, desde cuándo...',
-    diarrea: 'Veces, consistencia, color...',
-    sangrado: 'Dónde, cantidad...',
-    desorientacion: 'Duración, comportamiento...',
-    sin_sintomas: 'Todo bien, observaciones...'
+    nauseas:'Cuántas veces, desde cuándo...', vomito:'Color, cantidad, veces...',
+    letargo:'Desde qué hora, qué tan decaída...', sin_apetito:'Comió algo, cuánto dejó...',
+    convulsion:'Duración, tipo, lado afectado...', cojera:'Qué pata, intensidad...',
+    ansiedad:'Duración, qué la generó...', fiebre:'Temperatura, desde cuándo...',
+    diarrea:'Veces, consistencia, color...', sangrado:'Dónde, cantidad...',
+    desorientacion:'Duración, comportamiento...', sin_sintomas:'Todo bien, observaciones...'
   };
 
+  // ── AUTH ──
   onAuthStateChanged(auth, async user => {
     document.getElementById('loadingScreen').style.display = 'none';
     if (user) {
@@ -358,9 +348,7 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('appContent').style.display = 'block';
       document.getElementById('userBar').textContent = '👤 ' + user.displayName;
-      const now = new Date();
-      document.getElementById('fecha').value = now.toISOString().split('T')[0];
-      document.getElementById('hora').value = now.toTimeString().slice(0,5);
+      resetForm();
       await resolverAcceso();
     } else {
       document.getElementById('loginScreen').style.display = 'flex';
@@ -369,22 +357,16 @@
   });
 
   async function resolverAcceso() {
-    ownerUid = currentUser.uid;
-    isOwner = true;
+    ownerUid = currentUser.uid; isOwner = true;
     try {
       const emailNorm = currentUser.email.toLowerCase();
       const accessDoc = await getDoc(doc(db, 'accessMap', emailNorm));
-      if (accessDoc.exists()) {
-        const data = accessDoc.data();
-        if (data.ownerUid !== currentUser.uid) {
-          ownerUid = data.ownerUid;
-          isOwner = false;
-          document.getElementById('sharedBadge').style.display = 'inline-block';
-          document.querySelector('.tab').style.opacity = '0.4';
-          document.querySelector('.tab').style.pointerEvents = 'none';
-          const ajustesTab = document.querySelector('.tab[onclick*="ajustes"]');
-          if (ajustesTab) ajustesTab.style.display = 'none';
-        }
+      if (accessDoc.exists() && accessDoc.data().ownerUid !== currentUser.uid) {
+        ownerUid = accessDoc.data().ownerUid; isOwner = false;
+        document.getElementById('sharedBadge').style.display = 'inline-block';
+        document.querySelector('.tab').style.opacity = '0.4';
+        document.querySelector('.tab').style.pointerEvents = 'none';
+        document.querySelector('.tab[onclick*="ajustes"]').style.display = 'none';
       }
     } catch(e) { console.error(e); }
     await cargarDatos();
@@ -394,9 +376,9 @@
 
   async function cargarDatos() {
     try {
-      const eSnap = await getDocs(query(collection(db, 'users', ownerUid, 'entries'), orderBy('fecha','desc')));
+      const eSnap = await getDocs(query(collection(db,'users',ownerUid,'entries'), orderBy('fecha','desc')));
       entries = eSnap.docs.map(d => ({...d.data(), _id: d.id}));
-      const cSnap = await getDocs(query(collection(db, 'users', ownerUid, 'citas'), orderBy('fecha','asc')));
+      const cSnap = await getDocs(query(collection(db,'users',ownerUid,'citas'), orderBy('fecha','asc')));
       citas = cSnap.docs.map(d => ({...d.data(), _id: d.id}));
     } catch(e) { console.error(e); }
   }
@@ -404,159 +386,338 @@
   async function cargarAccesos() {
     if (!isOwner) return;
     try {
-      const aDoc = await getDoc(doc(db, 'users', currentUser.uid, 'config', 'accesos'));
+      const aDoc = await getDoc(doc(db,'users',currentUser.uid,'config','accesos'));
       accesos = aDoc.exists() ? (aDoc.data().lista || []) : [];
     } catch(e) { console.error(e); }
   }
 
-  async function guardarAccesos() {
-    await setDoc(doc(db, 'users', currentUser.uid, 'config', 'accesos'), { lista: accesos });
-    for (const email of accesos) {
-      await setDoc(doc(db, 'accessMap', email.toLowerCase()), { ownerUid: currentUser.uid, ownerEmail: currentUser.email });
-    }
+  // ── FORM RESET ──
+  function resetForm() {
+    const now = new Date();
+    const fechaEl = document.getElementById('fecha');
+    const horaEl = document.getElementById('hora');
+    if (fechaEl) fechaEl.value = now.toISOString().split('T')[0];
+    if (horaEl) horaEl.value = now.toTimeString().slice(0,5);
+    const cicloEl = document.getElementById('ciclo');
+    if (cicloEl) cicloEl.value = '';
+    document.getElementById('bloques').innerHTML = '';
+    document.getElementById('contraindicacionAlert').innerHTML = '';
+    document.getElementById('severidadBlock').style.display = 'none';
+    document.getElementById('btnGuardar').textContent = '💾 Guardar entrada';
+    document.getElementById('btnCancelarEdicion').style.display = 'none';
+    document.getElementById('editBanner').style.display = 'none';
+    // Show all add buttons
+    ['btnAddTemp','btnAddMed','btnAddSintomas','btnAddNotas','btnAddFotos'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    });
+    currentPhotos = []; selectedSymptoms = []; selectedSev = ''; symptomDetails = {};
+    medicamentosSeleccionados = []; editingEntryId = null;
   }
 
-  window.agregarAcceso = async () => {
-    if (!isOwner) return;
-    const email = document.getElementById('correoCompartir').value.trim().toLowerCase();
-    if (!email || !email.includes('@')) { alert('Ingresa un correo válido'); return; }
-    if (accesos.includes(email)) { alert('Este correo ya tiene acceso'); return; }
-    accesos.push(email);
-    await guardarAccesos();
-    document.getElementById('correoCompartir').value = '';
-    renderAccesos();
-    alert('✅ Acceso otorgado a ' + email);
+  // ── BLOQUES COLAPSABLES ──
+  window.addBloque = (tipo) => {
+    const container = document.getElementById('bloques');
+    const id = 'bloque_' + tipo + '_' + Date.now();
+    const div = document.createElement('div');
+    div.className = 'collapsible-block';
+    div.id = id;
+
+    let inner = '';
+    if (tipo === 'temperatura') {
+      inner = `
+        <div class="collapsible-header">
+          <span class="collapsible-title">🌡️ Temperatura</span>
+          <button type="button" class="btn-remove-block" onclick="removeBloque('${id}','temperatura')">✕</button>
+        </div>
+        <div id="tomasTemp_${id}">
+          <div class="toma-temp">
+            <div class="row-2">
+              <div>
+                <label>Temperatura (°C)</label>
+                <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:white;margin-bottom:4px;">
+                <div class="temp-indicator"></div>
+              </div>
+              <div>
+                <label>Hora</label>
+                <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:white;margin-bottom:12px;">
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" onclick="addTomaTemp('tomasTemp_${id}')" style="background:none;border:1.5px dashed #ddd5c8;color:var(--soft);font-size:0.78rem;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%">+ Agregar toma</button>`;
+      document.getElementById('btnAddTemp').style.display = 'none';
+    } else if (tipo === 'medicamento') {
+      const recentMeds = JSON.parse(localStorage.getItem('recentMeds') || '[]');
+      let listHtml = '';
+      if (recentMeds.length > 0) {
+        listHtml += '<div class="med-item-section">Recientes</div>';
+        recentMeds.slice(0,3).forEach(m => {
+          listHtml += '<div class="med-item recent" onclick="selectMed(\'' + m + '\',\'' + id + '\')">' + m + '</div>';
+        });
+        listHtml += '<div class="med-item-section">Todos</div>';
+      }
+      MEDICAMENTOS.forEach(m => {
+        listHtml += '<div class="med-item" onclick="selectMed(\'' + m + '\',\'' + id + '\')">' + m + '</div>';
+      });
+      listHtml += '<div class="med-item" onclick="selectMed(\'OTRO\',\'' + id + '\')">+ Otro medicamento...</div>';
+      inner = `
+        <div class="collapsible-header">
+          <span class="collapsible-title">💊 Medicamento</span>
+          <button type="button" class="btn-remove-block" onclick="removeBloque('${id}','medicamento')">✕</button>
+        </div>
+        <input type="text" placeholder="Buscar medicamento..." oninput="filterMeds(this,'medList_${id}')" style="margin-bottom:6px;background:white;">
+        <div class="med-list" id="medList_${id}">${listHtml}</div>
+        <div id="medSelected_${id}"></div>`;
+    } else if (tipo === 'sintomas') {
+      inner = `
+        <div class="collapsible-header">
+          <span class="collapsible-title">🔍 Síntomas</span>
+          <button type="button" class="btn-remove-block" onclick="removeBloque('${id}','sintomas')">✕</button>
+        </div>
+        <div class="symptom-grid">
+          <button type="button" class="symptom-btn" data-key="nauseas" onclick="toggleSymptom(this)">🤢 Náuseas</button>
+          <button type="button" class="symptom-btn" data-key="vomito" onclick="toggleSymptom(this)">🤮 Vómito</button>
+          <button type="button" class="symptom-btn" data-key="letargo" onclick="toggleSymptom(this)">😴 Letargo</button>
+          <button type="button" class="symptom-btn" data-key="sin_apetito" onclick="toggleSymptom(this)">🍽️ Sin apetito</button>
+          <button type="button" class="symptom-btn" data-key="convulsion" onclick="toggleSymptom(this)">⚡ Convulsión</button>
+          <button type="button" class="symptom-btn" data-key="cojera" onclick="toggleSymptom(this)">🦵 Cojera</button>
+          <button type="button" class="symptom-btn" data-key="ansiedad" onclick="toggleSymptom(this)">😰 Ansiedad</button>
+          <button type="button" class="symptom-btn" data-key="fiebre" onclick="toggleSymptom(this)">🌡️ Fiebre</button>
+          <button type="button" class="symptom-btn" data-key="diarrea" onclick="toggleSymptom(this)">💧 Diarrea</button>
+          <button type="button" class="symptom-btn" data-key="sangrado" onclick="toggleSymptom(this)">🩸 Sangrado</button>
+          <button type="button" class="symptom-btn" data-key="desorientacion" onclick="toggleSymptom(this)">😵 Desorientación</button>
+          <button type="button" class="symptom-btn" data-key="sin_sintomas" onclick="toggleSymptom(this)">✅ Sin síntomas</button>
+        </div>
+        <div id="symptomDetails_${id}"></div>`;
+      document.getElementById('btnAddSintomas').style.display = 'none';
+      document.getElementById('severidadBlock').style.display = 'block';
+    } else if (tipo === 'notas') {
+      inner = `
+        <div class="collapsible-header">
+          <span class="collapsible-title">📝 Notas</span>
+          <button type="button" class="btn-remove-block" onclick="removeBloque('${id}','notas')">✕</button>
+        </div>
+        <textarea id="notas" placeholder="Describe el comportamiento, si comió bien, ánimo..." style="background:white;margin-bottom:0"></textarea>`;
+      document.getElementById('btnAddNotas').style.display = 'none';
+    } else if (tipo === 'fotos') {
+      inner = `
+        <div class="collapsible-header">
+          <span class="collapsible-title">📷 Fotos</span>
+          <button type="button" class="btn-remove-block" onclick="removeBloque('${id}','fotos')">✕</button>
+        </div>
+        <div onclick="document.getElementById('photoInput').click()" style="border:2px dashed #ddd5c8;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:white">
+          <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)" style="display:none">
+          <div style="font-size:1.5rem">📸</div>
+          <p style="font-size:0.82rem;color:var(--soft);margin-top:4px">Toca para agregar fotos</p>
+        </div>
+        <div class="photo-previews" id="photoPreviews"></div>`;
+      document.getElementById('btnAddFotos').style.display = 'none';
+    }
+
+    div.innerHTML = inner;
+    container.appendChild(div);
   };
 
-  window.quitarAcceso = async (email) => {
-    if (!isOwner) return;
-    if (!confirm('¿Quitar acceso a ' + email + '?')) return;
-    accesos = accesos.filter(e => e !== email);
-    await guardarAccesos();
-    await deleteDoc(doc(db, 'accessMap', email));
-    renderAccesos();
+  window.removeBloque = (id, tipo) => {
+    document.getElementById(id).remove();
+    const btnMap = { temperatura:'btnAddTemp', medicamento:'btnAddMed', sintomas:'btnAddSintomas', notas:'btnAddNotas', fotos:'btnAddFotos' };
+    if (btnMap[tipo]) document.getElementById(btnMap[tipo]).style.display = 'flex';
+    if (tipo === 'sintomas') { selectedSymptoms = []; symptomDetails = {}; document.getElementById('severidadBlock').style.display = 'none'; }
+    if (tipo === 'fotos') { currentPhotos = []; }
+    if (tipo === 'medicamento') { medicamentosSeleccionados = medicamentosSeleccionados.filter(m => m.bloqueId !== id); checkContraindications(); }
   };
 
-  function renderAccesos() {
-    const container = document.getElementById('listaAccesos');
-    if (!container) return;
-    if (accesos.length === 0) {
-      container.innerHTML = '<p style="font-size:0.8rem;color:var(--soft);text-align:center;padding:12px">Nadie tiene acceso aún</p>';
-      return;
-    }
-    container.innerHTML = accesos.map(e => `
-      <div class="correo-tag">
-        <span>👁️ ${e}</span>
-        <button onclick="quitarAcceso('${e}')">✕</button>
-      </div>`).join('');
-  }
-
-  window.loginGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try { await signInWithPopup(auth, provider); }
-    catch(e) { alert('Error: ' + e.message); }
-  };
-
-  window.cerrarSesion = async () => { await signOut(auth); };
-
-  function checkRiskBanner() {
-    const banner = document.getElementById('riskBanner');
-    const hoy = new Date();
-    const todayStr = hoy.toISOString().split('T')[0];
-    const ciclos = [
-      { inicio: '2026-06-01', fin: '2026-06-11', ciclo: 'Ciclo 1' },
-      { inicio: '2026-06-08', fin: '2026-06-18', ciclo: 'Ciclo 2 sem.1' },
-      { inicio: '2026-06-15', fin: '2026-06-25', ciclo: 'Ciclo 2 sem.2' },
-      { inicio: '2026-06-22', fin: '2026-07-02', ciclo: 'Ciclo 2 sem.3' },
-      { inicio: '2026-07-06', fin: '2026-07-16', ciclo: 'Ciclo 3 dosis 1' },
-      { inicio: '2026-07-21', fin: '2026-07-31', ciclo: 'Ciclo 3 dosis 2' },
-    ];
-    const lomustinaDays = ['2026-05-29','2026-05-30','2026-05-31','2026-06-07','2026-06-14','2026-06-21','2026-07-05','2026-07-20'];
-    if (lomustinaDays.includes(todayStr)) {
-      banner.style.display = 'block';
-      banner.className = 'risk-banner warning';
-      banner.textContent = '💊 Hoy toca Lomustina — recuerda guantes y tomar temperatura esta noche';
-      return;
-    }
-    const riesgo = ciclos.find(c => todayStr >= c.inicio && todayStr <= c.fin);
-    if (riesgo) {
-      const diasRestantes = Math.ceil((new Date(riesgo.fin) - hoy) / (1000*60*60*24));
-      banner.style.display = 'block';
-      banner.className = 'risk-banner';
-      banner.textContent = '🌡️ Período de riesgo activo (' + riesgo.ciclo + ') — Tomar temperatura mañana y noche · ' + diasRestantes + ' días restantes';
-      return;
-    }
-    banner.style.display = 'none';
-  }
-
-  function checkRecordatoriosBanner() {
-    const ahora = new Date();
-    const hoy = ahora.toISOString().split('T')[0];
-    const horaActual = ahora.toTimeString().slice(0,5);
-    const banner = document.getElementById('riskBanner');
-    const caducados = recordatorios.filter(r => !r.completado && (r.fecha < hoy || (r.fecha === hoy && r.hora < horaActual)));
-    if (caducados.length > 0) {
-      banner.style.display = 'block';
-      banner.className = 'risk-banner';
-      banner.style.background = '#c0392b';
-      banner.textContent = '⚠️ Tienes ' + caducados.length + ' recordatorio(s) caducado(s) — ve a 🔔 Avisos';
-      return;
-    }
-    const hoyPendientes = recordatorios.filter(r => !r.completado && r.fecha === hoy && r.hora >= horaActual);
-    if (hoyPendientes.length > 0) {
-      banner.style.display = 'block';
-      banner.className = 'risk-banner warning';
-      banner.textContent = '🔔 Hoy: ' + hoyPendientes.map(r => r.hora + ' — ' + r.mensaje).join(' · ');
-      return;
-    }
-    checkRiskBanner();
-  }
-
-  window.showTab = (tab, btn) => {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(tab).classList.add('active');
-    btn.classList.add('active');
-    if (tab === 'historial') renderHistorial();
-    if (tab === 'resumen') renderResumen();
-    if (tab === 'citas') renderCitas();
-    if (tab === 'ajustes' && isOwner) renderAccesos();
-    if (tab === 'recordatorios') renderRecordatorios();
+  window.addTomaTemp = (containerId) => {
+    const container = document.getElementById(containerId);
+    const idx = container.querySelectorAll('.toma-temp').length;
+    const div = document.createElement('div');
+    div.className = 'toma-temp';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:0.72rem;color:var(--soft);font-weight:500">Toma ${idx+1}</span>
+        <button type="button" onclick="this.closest('.toma-temp').remove()" style="background:none;border:none;color:var(--danger);cursor:pointer">✕</button>
+      </div>
+      <div class="row-2">
+        <div>
+          <label>Temperatura (°C)</label>
+          <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:white;margin-bottom:4px;">
+          <div class="temp-indicator"></div>
+        </div>
+        <div>
+          <label>Hora</label>
+          <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:white;margin-bottom:12px;">
+        </div>
+      </div>`;
+    container.appendChild(div);
   };
 
   window.checkTempRow = (input) => {
     const ind = input.closest('.toma-temp').querySelector('.temp-indicator');
     const v = parseFloat(input.value.replace(',','.'));
-    if (isNaN(v) || input.value === '') { ind.textContent = ''; return; }
+    if (isNaN(v) || !input.value) { ind.textContent = ''; return; }
     if (v < 37.5) { ind.textContent = '🔵 Bajo'; ind.style.color = '#2980b9'; }
     else if (v <= 39.2) { ind.textContent = '🟢 Normal'; ind.style.color = '#4a6741'; }
     else if (v <= 39.5) { ind.textContent = '🟡 Límite'; ind.style.color = '#e67e22'; }
     else { ind.textContent = '🔴 FIEBRE'; ind.style.color = '#c0392b'; }
   };
 
-  window.agregarTomaTemp = () => {
-    const container = document.getElementById('tomasTemp');
-    const idx = container.querySelectorAll('.toma-temp').length;
-    const div = document.createElement('div');
-    div.className = 'toma-temp';
-    div.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <span style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em">Toma ${idx+1}</span>
-        <button type="button" onclick="this.closest('.toma-temp').remove()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.85rem;">✕</button>
+  // ── MEDICAMENTOS ──
+  window.filterMeds = (input, listId) => {
+    const q = input.value.toLowerCase();
+    const items = document.querySelectorAll('#' + listId + ' .med-item');
+    items.forEach(item => {
+      item.style.display = item.textContent.toLowerCase().includes(q) ? 'block' : 'none';
+    });
+    const sections = document.querySelectorAll('#' + listId + ' .med-item-section');
+    sections.forEach(s => s.style.display = q ? 'none' : 'block');
+  };
+
+  window.selectMed = (med, bloqueId) => {
+    if (med === 'OTRO') {
+      const nombre = prompt('Nombre del medicamento:');
+      if (!nombre) return;
+      med = nombre.trim();
+    }
+    const container = document.getElementById('medSelected_' + bloqueId);
+    const existingIdx = medicamentosSeleccionados.findIndex(m => m.bloqueId === bloqueId);
+    if (existingIdx >= 0) medicamentosSeleccionados.splice(existingIdx, 1);
+    medicamentosSeleccionados.push({ bloqueId, nombre: med, dosis: '', unidad: 'mg' });
+    const idx = medicamentosSeleccionados.length - 1;
+    container.innerHTML = `
+      <div class="med-selected">
+        <span class="med-selected-name">💊 ${med}</span>
       </div>
-      <div class="row-2">
-        <div>
-          <label>Temperatura (°C)</label>
-          <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:4px;">
-          <div class="temp-indicator" style="font-size:0.75rem;height:18px;font-weight:500;margin-bottom:8px"></div>
+      <div class="row-3" style="margin-bottom:12px">
+        <div style="grid-column:span 2">
+          <label>Dosis</label>
+          <input type="number" placeholder="ej. 50" oninput="medicamentosSeleccionados[${idx}].dosis=this.value" style="margin-bottom:0;background:white">
         </div>
         <div>
-          <label>Hora</label>
-          <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:12px;">
+          <label>Unidad</label>
+          <select onchange="medicamentosSeleccionados[${idx}].unidad=this.value" style="margin-bottom:0;background:white">
+            <option value="mg">mg</option>
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+            <option value="mcg">mcg</option>
+          </select>
         </div>
       </div>`;
-    container.appendChild(div);
+    // Update recents
+    const recentMeds = JSON.parse(localStorage.getItem('recentMeds') || '[]');
+    const filtered = recentMeds.filter(m => m !== med);
+    filtered.unshift(med);
+    localStorage.setItem('recentMeds', JSON.stringify(filtered.slice(0,5)));
+    checkContraindications();
   };
+
+  function checkContraindications() {
+    const medNames = medicamentosSeleccionados.map(m => m.nombre);
+    const alerts = [];
+    CONTRAINDICACIONES.forEach(c => {
+      if (c.meds.every(m => medNames.includes(m))) alerts.push(c.msg);
+    });
+    const container = document.getElementById('contraindicacionAlert');
+    if (alerts.length > 0) {
+      container.innerHTML = alerts.map(a => '<div class="contraindication-alert">' + a + '</div>').join('');
+    } else {
+      container.innerHTML = '';
+    }
+  }
+
+  // ── SÍNTOMAS ──
+  window.toggleSymptom = (btn) => {
+    const key = btn.dataset.key;
+    const txt = btn.textContent.trim();
+    const isSelected = btn.classList.contains('selected');
+    const bloqueEl = btn.closest('.collapsible-block');
+    const detailsId = bloqueEl ? 'symptomDetails_' + bloqueEl.id : null;
+
+    if (key === 'sin_sintomas' && !isSelected && selectedSymptoms.length > 0) {
+      const hasDetails = Object.values(symptomDetails).some(v => v && v.trim());
+      if (!confirm(hasDetails ? '¿Deseleccionar todos? Perderás los detalles escritos.' : '¿Deseleccionar todos los síntomas?')) return;
+      document.querySelectorAll('.symptom-btn.selected').forEach(b => b.classList.remove('selected'));
+      selectedSymptoms = []; symptomDetails = {};
+      btn.classList.add('selected'); selectedSymptoms.push(txt);
+      if (detailsId) renderSymptomDetails(detailsId); return;
+    }
+    if (key !== 'sin_sintomas' && !isSelected) {
+      const sinBtn = document.querySelector('.symptom-btn[data-key="sin_sintomas"].selected');
+      if (sinBtn) { sinBtn.classList.remove('selected'); selectedSymptoms = selectedSymptoms.filter(s => !s.includes('Sin síntomas')); delete symptomDetails['sin_sintomas']; }
+    }
+    btn.classList.toggle('selected');
+    if (btn.classList.contains('selected')) { selectedSymptoms.push(txt); symptomDetails[key] = ''; }
+    else { selectedSymptoms = selectedSymptoms.filter(s => s !== txt); delete symptomDetails[key]; }
+    if (detailsId) renderSymptomDetails(detailsId);
+  };
+
+  function renderSymptomDetails(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const selected = document.querySelectorAll('.symptom-btn.selected');
+    if (selected.length === 0) { container.innerHTML = ''; return; }
+    container.innerHTML = Array.from(selected).map(btn => {
+      const key = btn.dataset.key;
+      return `<div style="margin-bottom:10px">
+        <label style="font-size:0.72rem;color:var(--soft);margin-bottom:4px;display:block">${btn.textContent.trim()} — detalles</label>
+        <input type="text" placeholder="${symptomPlaceholders[key]||'Detalles...'}" value="${symptomDetails[key]||''}"
+          oninput="symptomDetails['${key}']=this.value"
+          style="width:100%;padding:9px 12px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;color:var(--bark);margin-bottom:0">
+      </div>`;
+    }).join('');
+  }
+
+  window.selectSev = (btn) => {
+    document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected'); selectedSev = btn.dataset.sev;
+  };
+
+  // ── FOTOS ──
+  window.handlePhotos = (input) => {
+    Array.from(input.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 1200; let w = img.width, h = img.height;
+          if (w > h && w > MAX) { h = h*(MAX/w); w = MAX; } else if (h > MAX) { w = w*(MAX/h); h = MAX; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img,0,0,w,h);
+          currentPhotos.push(canvas.toDataURL('image/jpeg',0.8));
+          renderPhotoPreviews();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  function renderPhotoPreviews() {
+    const el = document.getElementById('photoPreviews');
+    if (!el) return;
+    el.innerHTML = currentPhotos.map((p,i) => `
+      <div class="photo-preview"><img src="${p}">
+        <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
+      </div>`).join('');
+  }
+
+  window.removePhoto = (i) => { currentPhotos.splice(i,1); renderPhotoPreviews(); };
+
+  async function uploadPhotos() {
+    const urls = [];
+    for (let i = 0; i < currentPhotos.length; i++) {
+      const formData = new FormData();
+      formData.append('file', currentPhotos[i]);
+      formData.append('upload_preset', CLOUDINARY_PRESET);
+      formData.append('folder', 'sora/' + currentUser.uid);
+      const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', { method:'POST', body:formData });
+      const data = await res.json();
+      if (data.secure_url) urls.push(data.secure_url);
+      else throw new Error('Error subiendo foto');
+    }
+    return urls;
+  }
 
   function getTemperaturas() {
     const result = [];
@@ -568,215 +729,177 @@
     return result;
   }
 
-  window.toggleSymptom = (btn) => {
-    const key = btn.dataset.key;
-    const txt = btn.textContent.trim();
-    const isSelected = btn.classList.contains('selected');
-    if (key === 'sin_sintomas' && !isSelected && selectedSymptoms.length > 0) {
-      const hasDetails = Object.values(symptomDetails).some(v => v && v.trim() !== '');
-      if (!confirm(hasDetails ? '¿Deseleccionar todos los síntomas? Perderás los detalles que escribiste.' : '¿Deseleccionar todos los síntomas seleccionados?')) return;
-      document.querySelectorAll('.symptom-btn.selected').forEach(b => b.classList.remove('selected'));
-      selectedSymptoms = []; symptomDetails = {};
-      btn.classList.add('selected'); selectedSymptoms.push(txt);
-      renderSymptomDetails(); return;
-    }
-    if (key !== 'sin_sintomas' && !isSelected) {
-      const sinBtn = document.querySelector('.symptom-btn[data-key="sin_sintomas"]');
-      if (sinBtn && sinBtn.classList.contains('selected')) {
-        sinBtn.classList.remove('selected');
-        selectedSymptoms = selectedSymptoms.filter(s => !s.includes('Sin síntomas'));
-        delete symptomDetails['sin_sintomas'];
-      }
-    }
-    btn.classList.toggle('selected');
-    if (btn.classList.contains('selected')) { selectedSymptoms.push(txt); symptomDetails[key] = ''; }
-    else { selectedSymptoms = selectedSymptoms.filter(s => s !== txt); delete symptomDetails[key]; }
-    renderSymptomDetails();
-  };
-
-  function renderSymptomDetails() {
-    const container = document.getElementById('symptomDetails');
-    const selected = document.querySelectorAll('.symptom-btn.selected');
-    if (selected.length === 0) { container.innerHTML = ''; return; }
-    container.innerHTML = Array.from(selected).map(btn => {
-      const key = btn.dataset.key;
-      const label = btn.textContent.trim();
-      return `<div style="margin-bottom:10px">
-        <label style="font-size:0.72rem;color:var(--soft);margin-bottom:4px;display:block">${label} — detalles</label>
-        <input type="text" placeholder="${symptomPlaceholders[key]||'Detalles...'}"
-          value="${symptomDetails[key]||''}"
-          oninput="symptomDetails['${key}']=this.value"
-          style="width:100%;padding:9px 12px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:var(--cream);color:var(--bark);margin-bottom:0">
-      </div>`;
-    }).join('');
-  }
-
-  window.selectSev = (btn) => {
-    document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected'); selectedSev = btn.dataset.sev;
-  };
-
-  window.handlePhotos = (input) => {
-    Array.from(input.files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX = 1200;
-          let w = img.width, h = img.height;
-          if (w > h && w > MAX) { h = h*(MAX/w); w = MAX; }
-          else if (h > MAX) { w = w*(MAX/h); h = MAX; }
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          currentPhotos.push(canvas.toDataURL('image/jpeg', 0.8));
-          renderPhotoPreviews();
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  async function uploadPhotos() {
-    const urls = [];
-    for (let i = 0; i < currentPhotos.length; i++) {
-      const formData = new FormData();
-      formData.append('file', currentPhotos[i]);
-      formData.append('upload_preset', CLOUDINARY_PRESET);
-      formData.append('folder', 'sora/' + currentUser.uid);
-      const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (data.secure_url) urls.push(data.secure_url);
-      else throw new Error('Error subiendo foto: ' + JSON.stringify(data));
-    }
-    return urls;
-  }
-
-  function renderPhotoPreviews() {
-    document.getElementById('photoPreviews').innerHTML = currentPhotos.map((p,i) => `
-      <div class="photo-preview"><img src="${p}">
-        <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
-      </div>`).join('');
-  }
-
-  window.removePhoto = (i) => { currentPhotos.splice(i,1); renderPhotoPreviews(); };
-
-  const resetTomasTemp = () => {
-    document.getElementById('tomasTemp').innerHTML = `
-      <div class="toma-temp" data-index="0">
-        <div class="row-2">
-          <div>
-            <label>Temperatura (°C)</label>
-            <input type="text" placeholder="ej. 38.5" inputmode="decimal" oninput="checkTempRow(this)" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:4px;">
-            <div class="temp-indicator" style="font-size:0.75rem;height:18px;font-weight:500;margin-bottom:8px"></div>
-          </div>
-          <div>
-            <label>Hora</label>
-            <input type="time" style="width:100%;padding:10px 14px;border:1.5px solid #ddd5c8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--bark);background:var(--cream);margin-bottom:12px;">
-          </div>
-        </div>
-      </div>`;
-  };
-
+  // ── GUARDAR ENTRADA ──
   window.guardarEntrada = async () => {
     if (!isOwner) { alert('Solo la dueña puede agregar entradas'); return; }
     const fecha = document.getElementById('fecha').value;
     if (!fecha) { alert('Selecciona una fecha'); return; }
-    const cicloVal = document.getElementById('ciclo').value;
-    if (cicloVal !== 'Día de monitoreo') {
-      const existing = entries.find(e => e.fecha === fecha && e.ciclo !== 'Día de monitoreo');
-      if (existing) { alert('Ya existe una entrada para esta fecha. Usa "Día de monitoreo" para agregar un registro adicional.'); return; }
+
+    if (!editingEntryId) {
+      const cicloVal = document.getElementById('ciclo').value;
+      if (cicloVal !== 'Día de monitoreo') {
+        const existing = entries.find(e => e.fecha === fecha && e.ciclo !== 'Día de monitoreo');
+        if (existing) { alert('Ya existe una entrada para esta fecha. Usa "Día de monitoreo" para registro adicional.'); return; }
+      }
+    } else {
+      if (!confirm('¿Guardar los cambios en esta entrada?')) return;
     }
+
+    const notasEl = document.getElementById('notas');
     const rawEntry = {
       fecha,
       hora: document.getElementById('hora').value || '',
-      ciclo: cicloVal || '',
+      ciclo: document.getElementById('ciclo').value || '',
       temperaturas: getTemperaturas(),
+      medicamentos: medicamentosSeleccionados.map(m => ({ nombre: m.nombre, dosis: m.dosis, unidad: m.unidad })),
       sintomas: [...selectedSymptoms],
-      sintomasDetalles: Object.fromEntries(Object.entries(symptomDetails).filter(([k,v]) => v !== undefined)),
+      sintomasDetalles: Object.fromEntries(Object.entries(symptomDetails).filter(([,v]) => v !== undefined)),
       severidad: selectedSev || '',
-      notas: document.getElementById('notas').value || '',
+      notas: notasEl ? notasEl.value || '' : '',
       fotos: [],
-      creadoEn: new Date().toISOString()
+      creadoEn: editingEntryId ? (entries.find(e=>e._id===editingEntryId)?.creadoEn || new Date().toISOString()) : new Date().toISOString()
     };
     const entry = JSON.parse(JSON.stringify(rawEntry));
+
     try {
-      const docRef = await addDoc(collection(db, 'users', currentUser.uid, 'entries'), entry);
       let fotoUrls = [];
-      if (currentPhotos.length > 0) {
-        fotoUrls = await uploadPhotos();
-        await updateDoc(doc(db, 'users', currentUser.uid, 'entries', docRef.id), { fotos: fotoUrls });
+      if (currentPhotos.length > 0) fotoUrls = await uploadPhotos();
+
+      if (editingEntryId) {
+        const existingEntry = entries.find(e => e._id === editingEntryId);
+        const mergedFotos = [...(existingEntry?.fotos || []), ...fotoUrls];
+        await updateDoc(doc(db,'users',currentUser.uid,'entries',editingEntryId), {...entry, fotos: mergedFotos});
+        const idx = entries.findIndex(e => e._id === editingEntryId);
+        entries[idx] = {...entry, fotos: mergedFotos, _id: editingEntryId};
+      } else {
+        const docRef = await addDoc(collection(db,'users',currentUser.uid,'entries'), {...entry, fotos:[]});
+        if (fotoUrls.length > 0) await updateDoc(doc(db,'users',currentUser.uid,'entries',docRef.id), { fotos: fotoUrls });
+        entries.unshift({...entry, fotos: fotoUrls, _id: docRef.id});
       }
-      entries.unshift({...entry, fotos: fotoUrls, _id: docRef.id});
-      document.getElementById('notas').value = '';
-      document.getElementById('ciclo').value = '';
-      document.getElementById('photoPreviews').innerHTML = '';
-      document.querySelectorAll('.symptom-btn').forEach(b => b.classList.remove('selected'));
-      document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
-      resetTomasTemp();
-      currentPhotos = []; selectedSymptoms = []; selectedSev = ''; symptomDetails = {};
-      document.getElementById('symptomDetails').innerHTML = '';
-      const btn = document.querySelector('#nueva .btn-primary');
+
+      resetForm();
+      const btn = document.getElementById('btnGuardar');
       btn.textContent = '✅ ¡Guardado!'; btn.style.background = '#4a6741';
       setTimeout(() => { btn.textContent = '💾 Guardar entrada'; btn.style.background = ''; }, 2000);
     } catch(e) { alert('Error: ' + e.message); }
   };
 
+  // ── EDITAR ENTRADA ──
+  window.editarEntrada = (id) => {
+    const entry = entries.find(e => e._id === id);
+    if (!entry) return;
+    editingEntryId = id;
+    resetForm();
+
+    document.getElementById('fecha').value = entry.fecha;
+    document.getElementById('hora').value = entry.hora || '';
+    document.getElementById('ciclo').value = entry.ciclo || '';
+    document.getElementById('editBanner').style.display = 'block';
+    document.getElementById('btnGuardar').textContent = '💾 Guardar cambios';
+    document.getElementById('btnCancelarEdicion').style.display = 'block';
+
+    if (entry.temperaturas && entry.temperaturas.length > 0) {
+      addBloque('temperatura');
+      const container = document.querySelector('#bloques .toma-temp');
+      if (container && entry.temperaturas[0]) {
+        container.querySelector('input[type="text"]').value = entry.temperaturas[0].temp || '';
+        container.querySelector('input[type="time"]').value = entry.temperaturas[0].hora || '';
+      }
+    }
+    if (entry.medicamentos && entry.medicamentos.length > 0) {
+      entry.medicamentos.forEach(m => {
+        addBloque('medicamento');
+        setTimeout(() => selectMed(m.nombre, document.querySelector('#bloques .collapsible-block:last-child').id), 100);
+      });
+    }
+    if (entry.sintomas && entry.sintomas.length > 0) {
+      addBloque('sintomas');
+      selectedSymptoms = [...entry.sintomas];
+      symptomDetails = {...(entry.sintomasDetalles || {})};
+      setTimeout(() => {
+        entry.sintomas.forEach(s => {
+          document.querySelectorAll('.symptom-btn').forEach(btn => {
+            if (btn.textContent.trim() === s) btn.classList.add('selected');
+          });
+        });
+        const bloqueId = document.querySelector('#bloques .collapsible-block:last-child')?.id;
+        if (bloqueId) renderSymptomDetails('symptomDetails_' + bloqueId);
+      }, 100);
+      if (entry.severidad) {
+        setTimeout(() => {
+          document.querySelectorAll('.sev-btn').forEach(b => {
+            if (b.dataset.sev === entry.severidad) { b.classList.add('selected'); selectedSev = entry.severidad; }
+          });
+        }, 100);
+      }
+    }
+    if (entry.notas) {
+      addBloque('notas');
+      setTimeout(() => { const el = document.getElementById('notas'); if (el) el.value = entry.notas; }, 100);
+    }
+
+    showTab('nueva', document.querySelector('.tab'));
+    window.scrollTo(0,0);
+  };
+
+  window.cancelarEdicion = () => { editingEntryId = null; resetForm(); };
+
+  // ── HISTORIAL ──
   window.filtrar = (tipo, btn) => {
     activeFilter = tipo;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderHistorial();
+    btn.classList.add('active'); renderHistorial();
   };
 
   function renderHistorial() {
     const container = document.getElementById('listaEntradas');
     let filtered = [...entries];
-    if (activeFilter === 'grave') filtered = filtered.filter(e => e.severidad === 'grave');
-    if (activeFilter === 'convulsion') filtered = filtered.filter(e => e.sintomas && e.sintomas.some(s => s.includes('Convulsión')));
-    if (activeFilter === 'fiebre') filtered = filtered.filter(e => e.temperaturas && e.temperaturas.some(t => parseFloat(t.temp) > 39.2));
-    if (activeFilter === 'foto') filtered = filtered.filter(e => e.fotos && e.fotos.length > 0);
+    if (activeFilter==='grave') filtered = filtered.filter(e => e.severidad==='grave');
+    if (activeFilter==='convulsion') filtered = filtered.filter(e => e.sintomas && e.sintomas.some(s => s.includes('Convulsión')));
+    if (activeFilter==='fiebre') filtered = filtered.filter(e => e.temperaturas && e.temperaturas.some(t => parseFloat(t.temp) > 39.2));
+    if (activeFilter==='foto') filtered = filtered.filter(e => e.fotos && e.fotos.length > 0);
+
     if (filtered.length === 0) {
-      container.innerHTML = '<div class="empty-state"><div class="icon">🐾</div><p>' + (entries.length === 0 ? 'Aún no hay entradas.' : 'No hay entradas con este filtro.') + '</p></div>';
+      container.innerHTML = '<div class="empty-state"><div class="icon">🐾</div><p>' + (entries.length===0?'Aún no hay entradas.':'No hay entradas con este filtro.') + '</p></div>';
       return;
     }
     container.innerHTML = filtered.map(e => {
-      const fechaStr = new Date(e.fecha + 'T12:00:00').toLocaleDateString('es-CO', {weekday:'short', day:'numeric', month:'long'});
-      const badgeClass = e.severidad ? 'badge-' + e.severidad : 'badge-normal';
-      const badgeText = e.severidad ? e.severidad.charAt(0).toUpperCase() + e.severidad.slice(1) : 'Normal';
+      const fechaStr = new Date(e.fecha+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long'});
+      const badgeClass = e.severidad ? 'badge-'+e.severidad : 'badge-normal';
+      const badgeText = e.severidad ? e.severidad.charAt(0).toUpperCase()+e.severidad.slice(1) : 'Normal';
+
+      let tempsHtml = e.temperaturas && e.temperaturas.length ?
+        '<div class="entry-section">' + e.temperaturas.map(t => '🌡️ '+t.temp+'°C'+(t.hora?' · '+t.hora:'')).join(' | ') + '</div>' : '';
+
+      let medsHtml = e.medicamentos && e.medicamentos.length ?
+        '<div class="entry-meds">' + e.medicamentos.map(m => '<span class="med-tag">💊 '+m.nombre+(m.dosis?' '+m.dosis+m.unidad:'')+'</span>').join('') + '</div>' : '';
+
+      let sintomasHtml = e.sintomas && e.sintomas.length ?
+        '<div class="entry-symptoms">' + e.sintomas.map(s => '<span class="symptom-tag">'+s+'</span>').join('') + '</div>' : '';
 
       let fotosHtml = '';
       if (e.fotos && e.fotos.length > 0) {
-        const fotoItems = e.fotos.map((f, fi) => {
-          const delBtn = isOwner ? '<button type="button" onclick="eliminarFoto(\'' + e._id + '\',' + fi + ')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>' : '';
-          return '<div style="position:relative;flex-shrink:0"><img class="entry-photo" src="' + f + '" onclick="openModal(\'' + f + '\')"> ' + delBtn + '</div>';
+        const fotoItems = e.fotos.map((f,fi) => {
+          const delBtn = isOwner ? '<button type="button" onclick="eliminarFoto(\''+e._id+'\','+fi+')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>' : '';
+          return '<div style="position:relative;flex-shrink:0"><img class="entry-photo" src="'+f+'" onclick="openModal(\''+f+'\')">'+delBtn+'</div>';
         }).join('');
-        fotosHtml = '<div class="entry-photos">' + fotoItems + '</div>';
-      }
-
-      let tempsHtml = '';
-      if (e.temperaturas && e.temperaturas.length > 0) {
-        tempsHtml = '<div class="entry-meta">' + e.temperaturas.map(t => '<span>🌡️ ' + t.temp + '°C' + (t.hora ? ' · ' + t.hora : '') + '</span>').join(' ') + '</div>';
-      }
-
-      let sintomasHtml = '';
-      if (e.sintomas && e.sintomas.length > 0) {
-        sintomasHtml = '<div class="entry-symptoms">' + e.sintomas.map(s => '<span class="symptom-tag">' + s + '</span>').join('') + '</div>';
+        fotosHtml = '<div class="entry-photos">'+fotoItems+'</div>';
       }
 
       return '<div class="entry-card">' +
         '<div class="entry-header">' +
-          '<div><div class="entry-date">' + fechaStr + '</div><div class="entry-time">' + (e.hora || '') + (e.ciclo ? ' · ' + e.ciclo : '') + '</div></div>' +
-          '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
+          '<div><div class="entry-date">'+fechaStr+'</div><div class="entry-time">'+(e.hora||'')+(e.ciclo?' · '+e.ciclo:'')+'</div></div>' +
+          '<span class="badge '+badgeClass+'">'+badgeText+'</span>' +
         '</div>' +
-        tempsHtml +
-        sintomasHtml +
-        (e.notas ? '<div class="entry-notes">"' + e.notas + '"</div>' : '') +
+        tempsHtml + medsHtml + sintomasHtml +
+        (e.notas ? '<div class="entry-notes">"'+e.notas+'"</div>' : '') +
         fotosHtml +
         '<div class="entry-footer">' +
-          '<span class="entry-cycle">' + e.fecha + '</span>' +
-          (isOwner ? '<button type="button" class="btn-delete" onclick="eliminar(\'' + e._id + '\')">🗑 Eliminar</button>' : '<span></span>') +
+          '<span class="entry-cycle">'+e.fecha+'</span>' +
+          '<div style="display:flex;gap:6px">' +
+            (isOwner ? '<button type="button" class="btn-edit" onclick="editarEntrada(\''+e._id+'\')">✏️ Editar</button>' : '') +
+            (isOwner ? '<button type="button" class="btn-delete" onclick="eliminar(\''+e._id+'\')">🗑</button>' : '') +
+          '</div>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -785,7 +908,7 @@
   window.eliminar = async (id) => {
     if (!isOwner) return;
     if (!confirm('¿Eliminar esta entrada?')) return;
-    await deleteDoc(doc(db, 'users', currentUser.uid, 'entries', id));
+    await deleteDoc(doc(db,'users',currentUser.uid,'entries',id));
     entries = entries.filter(e => e._id !== id);
     renderHistorial();
   };
@@ -795,22 +918,22 @@
     if (!confirm('¿Eliminar esta foto?')) return;
     const entry = entries.find(e => e._id === entryId);
     if (!entry) return;
-    const newFotos = entry.fotos.filter((_, i) => i !== fotoIndex);
+    const newFotos = entry.fotos.filter((_,i) => i !== fotoIndex);
     try {
-      await updateDoc(doc(db, 'users', currentUser.uid, 'entries', entryId), { fotos: newFotos });
-      entry.fotos = newFotos;
-      renderHistorial();
+      await updateDoc(doc(db,'users',currentUser.uid,'entries',entryId), { fotos: newFotos });
+      entry.fotos = newFotos; renderHistorial();
     } catch(e) { alert('Error: ' + e.message); }
   };
 
+  // ── RESUMEN ──
   function renderResumen() {
     const container = document.getElementById('resumenContent');
     const total = entries.length;
     const convulsiones = entries.filter(e => e.sintomas && e.sintomas.some(s => s.includes('Convulsión'))).length;
-    const graves = entries.filter(e => e.severidad === 'grave').length;
-    const conFotos = entries.filter(e => e.fotos && e.fotos.length > 0).length;
+    const graves = entries.filter(e => e.severidad==='grave').length;
+    const conFotos = entries.filter(e => e.fotos && e.fotos.length>0).length;
     const hoy = new Date().toISOString().split('T')[0];
-    const hoyEntradas = entries.filter(e => e.fecha === hoy);
+    const hoyEntradas = entries.filter(e => e.fecha===hoy);
     container.innerHTML = `
       <div class="today-badge">📅 ${new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})}</div>
       <div class="stats-grid">
@@ -819,191 +942,260 @@
         <div class="stat-card"><div class="stat-number" style="color:var(--warning)">${graves}</div><div class="stat-label">Episodios graves</div></div>
         <div class="stat-card"><div class="stat-number" style="color:var(--moss)">${conFotos}</div><div class="stat-label">Con fotos</div></div>
       </div>
-      ${hoyEntradas.length > 0 ? '<div class="card"><div class="card-title"><span>☀️</span> Hoy</div>' + hoyEntradas.map(e => '<div style="padding:8px 0;border-bottom:1px solid var(--warm)"><div style="font-size:0.82rem;font-weight:500">' + (e.hora || 'Sin hora') + (e.temperaturas && e.temperaturas.length ? ' · 🌡️' + e.temperaturas.map(t => t.temp + '°C').join(', ') : '') + '</div>' + (e.sintomas && e.sintomas.length ? '<div style="font-size:0.75rem;color:var(--soft)">' + e.sintomas.join(', ') + '</div>' : '') + '</div>').join('') + '</div>' : ''}
-      <div class="card"><div class="card-title"><span>💊</span> Recordatorios</div>
+      ${hoyEntradas.length > 0 ? '<div class="card"><div class="card-title"><span>☀️</span> Hoy</div>'+hoyEntradas.map(e=>'<div style="padding:8px 0;border-bottom:1px solid var(--warm)"><div style="font-size:0.82rem;font-weight:500">'+(e.hora||'Sin hora')+(e.temperaturas&&e.temperaturas.length?' · 🌡️'+e.temperaturas.map(t=>t.temp+'°C').join(', '):'')+'</div>'+(e.sintomas&&e.sintomas.length?'<div style="font-size:0.75rem;color:var(--soft)">'+e.sintomas.join(', ')+'</div>':'')+'</div>').join('')+'</div>' : ''}
+      <div class="card"><div class="card-title"><span>💊</span> Recordatorios clave</div>
         <div style="font-size:0.82rem;line-height:2.2;color:var(--soft)">
-          <div>🔴 <strong style="color:var(--bark)">29 mayo</strong> — Lomustina Día 1</div>
-          <div>🔴 <strong style="color:var(--bark)">30 mayo</strong> — Lomustina Día 2</div>
-          <div>🔴 <strong style="color:var(--bark)">31 mayo</strong> — Lomustina Día 3</div>
           <div>⚠️ <strong style="color:var(--bark)">1–11 junio</strong> — Período riesgo médula</div>
+          <div>🔴 <strong style="color:var(--bark)">7 junio</strong> — Lomustina Ciclo 2</div>
           <div>🧪 <strong style="color:var(--bark)">12 junio</strong> — Fenobarbital sérico</div>
           <div>👨‍⚕️ <strong style="color:var(--bark)">18 junio</strong> — Control neurólogo</div>
         </div>
       </div>`;
   }
 
+  // ── CITAS ──
   window.guardarCita = async () => {
-    if (!isOwner) { alert('Solo la dueña puede agregar citas'); return; }
+    if (!isOwner) return;
     const fecha = document.getElementById('citaFecha').value;
     if (!fecha) { alert('Selecciona una fecha'); return; }
-    const cita = { fecha, hora: document.getElementById('citaHora').value, vet: document.getElementById('citaVet').value, motivo: document.getElementById('citaMotivo').value, notas: document.getElementById('citaNotas').value, completada: false };
-    const docRef = await addDoc(collection(db, 'users', currentUser.uid, 'citas'), cita);
-    citas.push({...cita, _id: docRef.id});
+    const cita = { fecha, hora:document.getElementById('citaHora').value, vet:document.getElementById('citaVet').value, motivo:document.getElementById('citaMotivo').value, notas:document.getElementById('citaNotas').value, completada:false };
+    const docRef = await addDoc(collection(db,'users',currentUser.uid,'citas'), cita);
+    citas.push({...cita, _id:docRef.id});
     citas.sort((a,b) => a.fecha.localeCompare(b.fecha));
-    document.getElementById('citaFecha').value = '';
-    document.getElementById('citaHora').value = '';
-    document.getElementById('citaVet').value = '';
-    document.getElementById('citaMotivo').value = '';
-    document.getElementById('citaNotas').value = '';
+    ['citaFecha','citaHora','citaVet','citaMotivo','citaNotas'].forEach(id => document.getElementById(id).value = '');
     renderCitas();
     const btn = document.querySelector('#citas .btn-primary');
-    btn.textContent = '✅ ¡Guardado!'; btn.style.background = '#4a6741';
-    setTimeout(() => { btn.textContent = '💾 Guardar cita'; btn.style.background = ''; }, 2000);
+    btn.textContent='✅ ¡Guardado!'; btn.style.background='#4a6741';
+    setTimeout(()=>{btn.textContent='💾 Guardar cita';btn.style.background='';},2000);
   };
 
   function renderCitas() {
     const container = document.getElementById('listaCitas');
     if (!container) return;
-    if (citas.length === 0) { container.innerHTML = '<div class="empty-state"><div class="icon">🏥</div><p>No hay citas programadas.</p></div>'; return; }
+    if (citas.length===0){container.innerHTML='<div class="empty-state"><div class="icon">🏥</div><p>No hay citas programadas.</p></div>';return;}
     const hoy = new Date().toISOString().split('T')[0];
-    const proximas = citas.filter(c => !c.completada && c.fecha >= hoy);
-    const pasadas = citas.filter(c => c.completada || c.fecha < hoy);
+    const proximas = citas.filter(c=>!c.completada&&c.fecha>=hoy);
+    const pasadas = citas.filter(c=>c.completada||c.fecha<hoy);
     let html = '';
-    if (proximas.length > 0) { html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Próximas</div>'; html += proximas.map(c => citaCard(c, false)).join(''); }
-    if (pasadas.length > 0) { html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Pasadas</div>'; html += pasadas.map(c => citaCard(c, true)).join(''); }
-    container.innerHTML = html;
+    if(proximas.length>0){html+='<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Próximas</div>';html+=proximas.map(c=>citaCard(c,false)).join('');}
+    if(pasadas.length>0){html+='<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Pasadas</div>';html+=pasadas.map(c=>citaCard(c,true)).join('');}
+    container.innerHTML=html;
   }
 
-  function citaCard(c, pasada) {
-    const fechaStr = new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-CO', {weekday:'short', day:'numeric', month:'long'});
-    return '<div class="entry-card" style="opacity:' + (pasada ? '0.65' : '1') + '">' +
-      '<div class="entry-header">' +
-        '<div><div class="entry-date">' + fechaStr + '</div><div class="entry-time">' + (c.hora || '') + (c.vet ? ' · ' + c.vet : '') + '</div></div>' +
-        '<span class="badge ' + (pasada ? 'badge-normal' : 'badge-leve') + '">' + (pasada ? 'Pasada' : 'Próxima') + '</span>' +
-      '</div>' +
-      (c.motivo ? '<div style="padding:0 16px 8px;font-size:0.85rem;font-weight:500;color:var(--bark)">' + c.motivo + '</div>' : '') +
-      (c.notas ? '<div class="entry-notes">"' + c.notas + '"</div>' : '') +
-      '<div class="entry-footer">' +
-        (isOwner ? '<button type="button" onclick="toggleCita(\'' + c._id + '\')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:\'DM Sans\',sans-serif;">' + (c.completada ? '↩️ Reabrir' : '✅ Completada') + '</button>' : '<span></span>') +
-        (isOwner ? '<button type="button" class="btn-delete" onclick="eliminarCita(\'' + c._id + '\')">🗑 Eliminar</button>' : '<span></span>') +
+  function citaCard(c,pasada){
+    const fechaStr=new Date(c.fecha+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long'});
+    return '<div class="entry-card" style="opacity:'+(pasada?'0.65':'1')+'">'+
+      '<div class="entry-header"><div><div class="entry-date">'+fechaStr+'</div><div class="entry-time">'+(c.hora||'')+(c.vet?' · '+c.vet:'')+'</div></div>'+
+      '<span class="badge '+(pasada?'badge-normal':'badge-leve')+'">'+(pasada?'Pasada':'Próxima')+'</span></div>'+
+      (c.motivo?'<div style="padding:0 16px 8px;font-size:0.85rem;font-weight:500;color:var(--bark)">'+c.motivo+'</div>':'')+
+      (c.notas?'<div class="entry-notes">"'+c.notas+'"</div>':'')+
+      '<div class="entry-footer">'+
+        (isOwner?'<button type="button" onclick="toggleCita(\''+c._id+'\')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:\'DM Sans\',sans-serif;">'+(c.completada?'↩️ Reabrir':'✅ Completada')+'</button>':'<span></span>')+
+        (isOwner?'<button type="button" class="btn-delete" onclick="eliminarCita(\''+c._id+'\')">🗑 Eliminar</button>':'<span></span>')+
       '</div></div>';
   }
 
-  window.toggleCita = async (id) => {
-    const cita = citas.find(c => c._id === id);
-    await updateDoc(doc(db, 'users', ownerUid, 'citas', id), { completada: !cita.completada });
-    citas = citas.map(c => c._id === id ? {...c, completada: !c.completada} : c);
-    renderCitas();
+  window.toggleCita = async(id)=>{
+    const cita=citas.find(c=>c._id===id);
+    await updateDoc(doc(db,'users',ownerUid,'citas',id),{completada:!cita.completada});
+    citas=citas.map(c=>c._id===id?{...c,completada:!c.completada}:c); renderCitas();
+  };
+  window.eliminarCita = async(id)=>{
+    if(!confirm('¿Eliminar?'))return;
+    await deleteDoc(doc(db,'users',currentUser.uid,'citas',id));
+    citas=citas.filter(c=>c._id!==id); renderCitas();
   };
 
-  window.eliminarCita = async (id) => {
-    if (!confirm('¿Eliminar?')) return;
-    await deleteDoc(doc(db, 'users', currentUser.uid, 'citas', id));
-    citas = citas.filter(c => c._id !== id);
-    renderCitas();
-  };
-
+  // ── RECORDATORIOS ──
   window.guardarRecordatorio = () => {
-    const fechaInicio = document.getElementById('recFechaInicio').value;
-    const fechaFin = document.getElementById('recFechaFin').value || fechaInicio;
-    const hora = document.getElementById('recHora').value;
-    const mensaje = document.getElementById('recMensaje').value.trim();
-    if (!fechaInicio || !hora || !mensaje) { alert('Completa fecha inicio, hora y mensaje'); return; }
-    if (fechaFin < fechaInicio) { alert('La fecha fin no puede ser antes que la fecha inicio'); return; }
-    const start = new Date(fechaInicio + 'T12:00:00');
-    const end = new Date(fechaFin + 'T12:00:00');
-    const dias = Math.round((end - start) / (1000*60*60*24)) + 1;
-    if (dias > 60) { alert('El rango máximo es 60 días'); return; }
-    for (let i = 0; i < dias; i++) {
-      const d = new Date(start);
-      d.setDate(d.getDate() + i);
-      const fecha = d.toISOString().split('T')[0];
-      if (!recordatorios.find(r => r.fecha === fecha && r.hora === hora && r.mensaje === mensaje)) {
-        recordatorios.push({ id: Date.now() + i, fecha, hora, mensaje, completado: false });
-      }
+    const fechaInicio=document.getElementById('recFechaInicio').value;
+    const fechaFin=document.getElementById('recFechaFin').value||fechaInicio;
+    const hora=document.getElementById('recHora').value;
+    const mensaje=document.getElementById('recMensaje').value.trim();
+    if(!fechaInicio||!hora||!mensaje){alert('Completa fecha inicio, hora y mensaje');return;}
+    const start=new Date(fechaInicio+'T12:00:00');
+    const end=new Date(fechaFin+'T12:00:00');
+    const dias=Math.round((end-start)/(1000*60*60*24))+1;
+    if(dias>60){alert('El rango máximo es 60 días');return;}
+    for(let i=0;i<dias;i++){
+      const d=new Date(start); d.setDate(d.getDate()+i);
+      const fecha=d.toISOString().split('T')[0];
+      if(!recordatorios.find(r=>r.fecha===fecha&&r.hora===hora&&r.mensaje===mensaje))
+        recordatorios.push({id:Date.now()+i,fecha,hora,mensaje,completado:false});
     }
-    recordatorios.sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
-    localStorage.setItem('soraRecordatorios', JSON.stringify(recordatorios));
-    document.getElementById('recFechaInicio').value = '';
-    document.getElementById('recFechaFin').value = '';
-    document.getElementById('recHora').value = '';
-    document.getElementById('recMensaje').value = '';
-    renderRecordatorios();
-    checkRecordatoriosBanner();
-    const btn = document.querySelector('#recordatorios .btn-primary');
-    btn.textContent = '✅ ' + (dias > 1 ? dias + ' recordatorios creados' : 'Guardado');
-    btn.style.background = '#4a6741';
-    setTimeout(() => { btn.textContent = '💾 Guardar recordatorio'; btn.style.background = ''; }, 2500);
+    recordatorios.sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+    localStorage.setItem('soraRecordatorios',JSON.stringify(recordatorios));
+    ['recFechaInicio','recFechaFin','recHora','recMensaje'].forEach(id=>document.getElementById(id).value='');
+    renderRecordatorios(); checkRecordatoriosBanner();
+    const btn=document.querySelector('#recordatorios .btn-primary');
+    btn.textContent='✅ '+(dias>1?dias+' recordatorios':'Guardado'); btn.style.background='#4a6741';
+    setTimeout(()=>{btn.textContent='💾 Guardar recordatorio';btn.style.background='';},2500);
   };
 
-  function renderRecordatorios() {
-    const container = document.getElementById('listaRecordatorios');
-    if (!container) return;
-    if (recordatorios.length === 0) { container.innerHTML = '<div class="empty-state"><div class="icon">🔔</div><p>No hay recordatorios.<br>Agrega uno arriba.</p></div>'; return; }
-    const ahora = new Date();
-    const hoy = ahora.toISOString().split('T')[0];
-    const horaActual = ahora.toTimeString().slice(0,5);
-    const pendientes = recordatorios.filter(r => !r.completado && (r.fecha > hoy || (r.fecha === hoy && r.hora >= horaActual)));
-    const caducados = recordatorios.filter(r => !r.completado && (r.fecha < hoy || (r.fecha === hoy && r.hora < horaActual)));
-    const completados = recordatorios.filter(r => r.completado);
+  window.filtrarRec = (tipo, btn) => {
+    activeRecFilter = tipo;
+    document.querySelectorAll('#recordatorios .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderRecordatorios();
+  };
+
+  function renderRecordatorios(){
+    const container=document.getElementById('listaRecordatorios');
+    if(!container)return;
+
+    const ahora=new Date(); const hoy=ahora.toISOString().split('T')[0]; const horaActual=ahora.toTimeString().slice(0,5);
+    const proximos=recordatorios.filter(r=>!r.completado&&(r.fecha>hoy||(r.fecha===hoy&&r.hora>=horaActual)));
+    let caducados=recordatorios.filter(r=>!r.completado&&(r.fecha<hoy||(r.fecha===hoy&&r.hora<horaActual)));
+    const completados=recordatorios.filter(r=>r.completado);
+
+    // Auto-delete oldest caducados when more than 5
+    if(caducados.length>5){
+      caducados.sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+      const toDelete = caducados.slice(0, caducados.length-5);
+      toDelete.forEach(r=>{ recordatorios=recordatorios.filter(x=>x.id!==r.id); });
+      localStorage.setItem('soraRecordatorios',JSON.stringify(recordatorios));
+      caducados=recordatorios.filter(r=>!r.completado&&(r.fecha<hoy||(r.fecha===hoy&&r.hora<horaActual)));
+    }
+
+    if(recordatorios.length===0){container.innerHTML='<div class="empty-state"><div class="icon">🔔</div><p>No hay recordatorios.</p></div>';return;}
+
+    let filtered = [];
     let html = '';
-    if (pendientes.length > 0) { html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Pendientes</div>'; html += pendientes.map(r => recCard(r, 'pendiente')).join(''); }
-    if (caducados.length > 0) { html += '<div style="font-size:0.75rem;font-weight:500;color:var(--danger);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">⚠️ Caducados</div>'; html += caducados.map(r => recCard(r, 'caducado')).join(''); }
-    if (completados.length > 0) { html += '<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Completados</div>'; html += completados.map(r => recCard(r, 'completado')).join(''); }
-    container.innerHTML = html;
+
+    if(activeRecFilter==='todos'){
+      if(proximos.length>0){html+='<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Próximos</div>';html+=proximos.map(r=>recCard(r,'pendiente')).join('');}
+      if(caducados.length>0){html+='<div style="font-size:0.75rem;font-weight:500;color:var(--danger);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">⚠️ Caducados</div>';html+=caducados.map(r=>recCard(r,'caducado')).join('');}
+      if(completados.length>0){html+='<div style="font-size:0.75rem;font-weight:500;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 8px">Completados</div>';html+=completados.map(r=>recCard(r,'completado')).join('');}
+    } else if(activeRecFilter==='proximos'){
+      if(proximos.length>0) html+=proximos.map(r=>recCard(r,'pendiente')).join('');
+      else html='<div class="empty-state"><div class="icon">🔔</div><p>No hay recordatorios próximos.</p></div>';
+    } else if(activeRecFilter==='caducados'){
+      if(caducados.length>0) html+=caducados.map(r=>recCard(r,'caducado')).join('');
+      else html='<div class="empty-state"><div class="icon">✅</div><p>No hay caducados.</p></div>';
+    } else if(activeRecFilter==='completados'){
+      if(completados.length>0) html+=completados.map(r=>recCard(r,'completado')).join('');
+      else html='<div class="empty-state"><div class="icon">🔔</div><p>Aún no has completado ninguno.</p></div>';
+    }
+
+    container.innerHTML = html || '<div class="empty-state"><div class="icon">🔔</div><p>No hay recordatorios.</p></div>';
   }
 
-  function recCard(r, estado) {
-    const fechaStr = new Date(r.fecha + 'T12:00:00').toLocaleDateString('es-CO', {weekday:'short', day:'numeric', month:'long'});
-    return '<div class="entry-card" style="opacity:' + (estado === 'completado' ? '0.6' : '1') + ';border-color:' + (estado === 'caducado' ? '#fde8e8' : estado === 'completado' ? '#e8f0e5' : '#ede5d8') + '">' +
-      '<div class="entry-header">' +
-        '<div><div class="entry-date">' + fechaStr + '</div><div class="entry-time">🕐 ' + r.hora + '</div></div>' +
-        '<span class="badge ' + (estado === 'caducado' ? 'badge-grave' : estado === 'completado' ? 'badge-leve' : 'badge-moderado') + '">' + (estado === 'caducado' ? 'Caducado' : estado === 'completado' ? '✅ Hecho' : 'Pendiente') + '</span>' +
-      '</div>' +
-      '<div style="padding:0 16px 12px;font-size:0.88rem;color:var(--bark);font-weight:500">🔔 ' + r.mensaje + '</div>' +
-      '<div class="entry-footer">' +
-        (!r.completado ? '<button type="button" onclick="completarRecordatorio(' + r.id + ')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:\'DM Sans\',sans-serif;">✅ Marcar hecho</button>' : '<span></span>') +
-        '<button type="button" class="btn-delete" onclick="eliminarRecordatorio(' + r.id + ')">🗑 Eliminar</button>' +
+  function recCard(r,estado){
+    const fechaStr=new Date(r.fecha+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long'});
+    return '<div class="entry-card" style="opacity:'+(estado==='completado'?'0.6':'1')+';border-color:'+(estado==='caducado'?'#fde8e8':estado==='completado'?'#e8f0e5':'#ede5d8')+'">'+
+      '<div class="entry-header"><div><div class="entry-date">'+fechaStr+'</div><div class="entry-time">🕐 '+r.hora+'</div></div>'+
+      '<span class="badge '+(estado==='caducado'?'badge-grave':estado==='completado'?'badge-leve':'badge-moderado')+'">'+(estado==='caducado'?'Caducado':estado==='completado'?'✅ Hecho':'Pendiente')+'</span></div>'+
+      '<div style="padding:0 16px 12px;font-size:0.88rem;color:var(--bark);font-weight:500">🔔 '+r.mensaje+'</div>'+
+      '<div class="entry-footer">'+
+        (!r.completado?'<button type="button" onclick="completarRecordatorio('+r.id+')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:\'DM Sans\',sans-serif;">✅ Marcar hecho</button>':'<span></span>')+
+        '<button type="button" class="btn-delete" onclick="eliminarRecordatorio('+r.id+')">🗑 Eliminar</button>'+
       '</div></div>';
   }
 
-  window.completarRecordatorio = (id) => {
-    recordatorios = recordatorios.map(r => r.id === id ? {...r, completado: true} : r);
-    localStorage.setItem('soraRecordatorios', JSON.stringify(recordatorios));
-    renderRecordatorios();
-    checkRecordatoriosBanner();
+  window.completarRecordatorio=(id)=>{recordatorios=recordatorios.map(r=>r.id===id?{...r,completado:true}:r);localStorage.setItem('soraRecordatorios',JSON.stringify(recordatorios));renderRecordatorios();checkRecordatoriosBanner();};
+  window.eliminarRecordatorio=(id)=>{if(!confirm('¿Eliminar?'))return;recordatorios=recordatorios.filter(r=>r.id!==id);localStorage.setItem('soraRecordatorios',JSON.stringify(recordatorios));renderRecordatorios();checkRecordatoriosBanner();};
+
+  // ── BANNERS ──
+  function checkRiskBanner(){
+    const banner=document.getElementById('riskBanner');
+    const hoy=new Date(); const todayStr=hoy.toISOString().split('T')[0];
+    const ciclos=[
+      {inicio:'2026-06-01',fin:'2026-06-11',ciclo:'Ciclo 1'},
+      {inicio:'2026-06-08',fin:'2026-06-18',ciclo:'Ciclo 2 sem.1'},
+      {inicio:'2026-06-15',fin:'2026-06-25',ciclo:'Ciclo 2 sem.2'},
+      {inicio:'2026-06-22',fin:'2026-07-02',ciclo:'Ciclo 2 sem.3'},
+      {inicio:'2026-07-06',fin:'2026-07-16',ciclo:'Ciclo 3 d.1'},
+      {inicio:'2026-07-21',fin:'2026-07-31',ciclo:'Ciclo 3 d.2'},
+    ];
+    const lomustinaDays=['2026-05-29','2026-05-30','2026-05-31','2026-06-07','2026-06-14','2026-06-21','2026-07-05','2026-07-20'];
+    if(lomustinaDays.includes(todayStr)){banner.style.display='block';banner.className='risk-banner warning';banner.textContent='💊 Hoy toca Lomustina — guantes y temperatura esta noche';return;}
+    const riesgo=ciclos.find(c=>todayStr>=c.inicio&&todayStr<=c.fin);
+    if(riesgo){const d=Math.ceil((new Date(riesgo.fin)-hoy)/(1000*60*60*24));banner.style.display='block';banner.className='risk-banner';banner.textContent='🌡️ Período de riesgo ('+riesgo.ciclo+') — temperatura mañana y noche · '+d+' días restantes';return;}
+    banner.style.display='none';
+  }
+
+  function checkRecordatoriosBanner(){
+    const ahora=new Date(); const hoy=ahora.toISOString().split('T')[0]; const horaActual=ahora.toTimeString().slice(0,5);
+    const banner=document.getElementById('riskBanner');
+    const caducados=recordatorios.filter(r=>!r.completado&&(r.fecha<hoy||(r.fecha===hoy&&r.hora<horaActual)));
+    if(caducados.length>0){banner.style.display='block';banner.className='risk-banner';banner.style.background='#c0392b';banner.textContent='⚠️ Tienes '+caducados.length+' recordatorio(s) caducado(s) — ve a 🔔 Avisos';return;}
+    const hoyPendientes=recordatorios.filter(r=>!r.completado&&r.fecha===hoy&&r.hora>=horaActual);
+    if(hoyPendientes.length>0){banner.style.display='block';banner.className='risk-banner warning';banner.textContent='🔔 Hoy: '+hoyPendientes.map(r=>r.hora+' — '+r.mensaje).join(' · ');return;}
+    checkRiskBanner();
+  }
+
+  // ── AJUSTES ──
+  window.agregarAcceso = async()=>{
+    if(!isOwner)return;
+    const email=document.getElementById('correoCompartir').value.trim().toLowerCase();
+    if(!email||!email.includes('@')){alert('Ingresa un correo válido');return;}
+    if(accesos.includes(email)){alert('Este correo ya tiene acceso');return;}
+    accesos.push(email);
+    await setDoc(doc(db,'users',currentUser.uid,'config','accesos'),{lista:accesos});
+    await setDoc(doc(db,'accessMap',email),{ownerUid:currentUser.uid,ownerEmail:currentUser.email});
+    document.getElementById('correoCompartir').value='';
+    renderAccesos(); alert('✅ Acceso otorgado a '+email);
   };
 
-  window.eliminarRecordatorio = (id) => {
-    if (!confirm('¿Eliminar este recordatorio?')) return;
-    recordatorios = recordatorios.filter(r => r.id !== id);
-    localStorage.setItem('soraRecordatorios', JSON.stringify(recordatorios));
-    renderRecordatorios();
-    checkRecordatoriosBanner();
+  window.quitarAcceso = async(email)=>{
+    if(!isOwner)return;
+    if(!confirm('¿Quitar acceso a '+email+'?'))return;
+    accesos=accesos.filter(e=>e!==email);
+    await setDoc(doc(db,'users',currentUser.uid,'config','accesos'),{lista:accesos});
+    await deleteDoc(doc(db,'accessMap',email));
+    renderAccesos();
   };
 
-  window.exportarDatos = () => {
-    const data = JSON.stringify({ entries, citas }, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sora-respaldo-' + new Date().toISOString().split('T')[0] + '.json';
-    a.click();
+  function renderAccesos(){
+    const container=document.getElementById('listaAccesos');
+    if(!container)return;
+    container.innerHTML=accesos.length===0?'<p style="font-size:0.8rem;color:var(--soft);text-align:center;padding:12px">Nadie tiene acceso aún</p>':
+      accesos.map(e=>'<div class="correo-tag"><span>👁️ '+e+'</span><button onclick="quitarAcceso(\''+e+'\')">✕</button></div>').join('');
+  }
+
+  window.exportarDatos=()=>{
+    const data=JSON.stringify({entries,citas},null,2);
+    const blob=new Blob([data],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='sora-respaldo-'+new Date().toISOString().split('T')[0]+'.json'; a.click();
     URL.revokeObjectURL(url);
   };
 
-  window.importarDatos = (input) => {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async e => {
-      try {
-        const data = JSON.parse(e.target.result);
-        const ents = Array.isArray(data) ? data : (data.entries || []);
-        for (const entry of ents) {
-          const {_id, ...rest} = entry;
-          await addDoc(collection(db, 'users', currentUser.uid, 'entries'), rest);
-        }
-        await cargarDatos();
-        alert('✅ ' + ents.length + ' entradas importadas');
-      } catch(err) { alert('Error: ' + err.message); }
+  window.importarDatos=(input)=>{
+    const file=input.files[0]; if(!file)return;
+    const reader=new FileReader();
+    reader.onload=async e=>{
+      try{
+        const data=JSON.parse(e.target.result);
+        const ents=Array.isArray(data)?data:(data.entries||[]);
+        for(const entry of ents){const{_id,...rest}=entry;await addDoc(collection(db,'users',currentUser.uid,'entries'),rest);}
+        await cargarDatos(); alert('✅ '+ents.length+' entradas importadas');
+      }catch(err){alert('Error: '+err.message);}
     };
     reader.readAsText(file);
   };
 
-  window.openModal = (src) => { document.getElementById('modalImg').src = src; document.getElementById('photoModal').classList.add('open'); };
-  window.closeModal = () => { document.getElementById('photoModal').classList.remove('open'); };
+  // ── NAV ──
+  window.irAAvisos = () => {
+    const btn = document.querySelector('.tab[onclick*="recordatorios"]');
+    if (btn) { showTab('recordatorios', btn); window.scrollTo(0,0); }
+  };
+
+  window.showTab=(tab,btn)=>{
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById(tab).classList.add('active'); btn.classList.add('active');
+    if(tab==='historial')renderHistorial();
+    if(tab==='resumen')renderResumen();
+    if(tab==='citas')renderCitas();
+    if(tab==='ajustes'&&isOwner)renderAccesos();
+    if(tab==='recordatorios')renderRecordatorios();
+  };
+
+  window.loginGoogle=async()=>{const provider=new GoogleAuthProvider();try{await signInWithPopup(auth,provider);}catch(e){alert('Error: '+e.message);}};
+  window.cerrarSesion=async()=>{await signOut(auth);};
+  window.openModal=(src)=>{document.getElementById('modalImg').src=src;document.getElementById('photoModal').classList.add('open');};
+  window.closeModal=()=>{document.getElementById('photoModal').classList.remove('open');};
 </script>
 </body>
 </html>
