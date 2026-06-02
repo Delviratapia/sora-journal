@@ -387,7 +387,7 @@ function resetForm() {
     const el=document.getElementById(id); if(el) el.style.display='flex';
   });
   currentPhotos=[]; selectedSymptoms=[]; selectedSev=''; symptomDetails={};
-  medicamentosSeleccionados=[]; editingEntryId=null;
+  medicamentosSeleccionados=[]; window._editFotos=null; editingEntryId=null;
 }
 
 // ── BLOQUES ──
@@ -704,6 +704,18 @@ function renderPhotoPreviews() {
 
 window.removePhoto=(i)=>{ currentPhotos.splice(i,1); renderPhotoPreviews(); };
 
+window.removeExistingPhoto=(i)=>{
+  // Remove from existing entry fotos (tracked separately during edit)
+  if(!window._editFotos) return;
+  window._editFotos.splice(i,1);
+  const pp=document.getElementById('photoPreviews');
+  if(pp) pp.innerHTML=window._editFotos.map((f,j)=>
+    '<div class="photo-preview"><img src="'+f+'"><button class="remove-photo" onclick="removeExistingPhoto('+j+')">✕</button></div>'
+  ).join('') + currentPhotos.map((p,j)=>
+    '<div class="photo-preview"><img src="'+p+'"><button class="remove-photo" onclick="removePhoto('+j+')">✕</button></div>'
+  ).join('');
+};
+
 async function uploadPhotos() {
   const urls=[];
   for(let i=0;i<currentPhotos.length;i++){
@@ -764,7 +776,7 @@ window.guardarEntrada = async () => {
 
     if(editingEntryId){
       const existing=entries.find(e=>e._id===editingEntryId);
-      const merged=[...(existing?.fotos||[]),...fotoUrls];
+      const merged=[...(window._editFotos||existing?.fotos||[]),...fotoUrls];
       await updateDoc(doc(db,'users',currentUser.uid,'entries',editingEntryId),{...entry,fotos:merged});
       const idx=entries.findIndex(e=>e._id===editingEntryId);
       entries[idx]={...entry,fotos:merged,_id:editingEntryId};
@@ -784,13 +796,28 @@ window.guardarEntrada = async () => {
 window.editarEntrada = (id) => {
   const entry=entries.find(e=>e._id===id);
   if(!entry)return;
-  editingEntryId=id; resetForm();
+  resetForm(); editingEntryId=id;
   document.getElementById('fecha').value=entry.fecha;
   document.getElementById('hora').value=entry.hora||'';
   document.getElementById('ciclo').value=entry.ciclo||'';
   document.getElementById('editBanner').style.display='block';
   document.getElementById('btnGuardar').textContent='💾 Guardar cambios';
   document.getElementById('btnCancelarEdicion').style.display='block';
+  // Load existing photos
+  window._editFotos = [...(entry.fotos||[])];
+  if(entry.fotos&&entry.fotos.length>0){
+    addBloque('fotos');
+    setTimeout(()=>{
+      const pp=document.getElementById('photoPreviews');
+      if(pp){
+        // Show existing photos as previews (URLs from Cloudinary)
+        pp.innerHTML=entry.fotos.map((f,i)=>
+          '<div class="photo-preview"><img src="'+f+'"><button class="remove-photo" onclick="removeExistingPhoto('+i+')">✕</button></div>'
+        ).join('');
+      }
+    },100);
+  }
+
   if(entry.temperaturas&&entry.temperaturas.length>0){
     addBloque('temperatura');
     setTimeout(()=>{
