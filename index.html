@@ -257,12 +257,6 @@
       <div id="listaAccesos"></div>
     </div>
     <div class="card">
-      <div class="card-title"><span>💊</span> Medicamentos recientes</div>
-      <p style="font-size:0.82rem;color:var(--soft);margin-bottom:12px;line-height:1.6">Limpia la lista de medicamentos usados recientemente.</p>
-      <button type="button" onclick="limpiarRecientes()" style="width:100%;padding:12px;background:white;color:var(--danger);border:1.5px solid #fde8e8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;">🗑 Limpiar medicamentos recientes</button>
-    </div>
-
-    <div class="card">
       <div class="card-title"><span>💾</span> Respaldo</div>
       <button type="button" class="btn-primary" onclick="exportarDatos()" style="margin-bottom:10px">📤 Exportar respaldo</button>
       <label style="display:block;width:100%;padding:12px;background:white;color:var(--bark);border:1.5px solid #ddd5c8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;text-align:center;text-transform:none;letter-spacing:0;margin:0;">
@@ -1275,7 +1269,7 @@ function renderContactos() {
           (tel ? '<a href="tel:' + tel + '" style="padding:6px 12px;background:var(--moss);color:white;border-radius:8px;font-size:0.78rem;text-decoration:none">📞 Llamar</a>' : '') +
           (wa ? '<a href="https://wa.me/' + wa.replace(/[^0-9]/g,'') + '" target="_blank" style="padding:6px 12px;background:#25D366;color:white;border-radius:8px;font-size:0.78rem;text-decoration:none">💬 WhatsApp</a>' : '') +
         '</div>' +
-        '<button type="button" class="btn-delete" onclick="eliminarContacto(' + c.id + ')">🗑</button>' +
+        '<button type="button" class="btn-delete" onclick="eliminarContacto(\''+c.id+'\')"  >🗑</button>' +
       '</div></div>';
   }).join('');
 }
