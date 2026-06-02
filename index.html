@@ -404,8 +404,9 @@ async function cargarDatos() {
     citas = cs.docs.map(d=>({...d.data(),_id:d.id}));
     // Only load personal data for owner
     if (ownerUid === (currentUser?.uid||ownerUid)) {
-      const rs = await getDocs(query(collection(db,'users',ownerUid,'recordatorios'),orderBy('fecha','asc')));
+      const rs = await getDocs(collection(db,'users',ownerUid,'recordatorios'));
       recordatorios = rs.docs.map(d=>({...d.data(),id:d.id}));
+      recordatorios.sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
       const cons = await getDocs(collection(db,'users',ownerUid,'contactos'));
       contactos = cons.docs.map(d=>({...d.data(),id:d.id}));
     }
@@ -1053,7 +1054,7 @@ window.eliminarCita=async(id)=>{
 };
 
 // ── RECORDATORIOS ──
-window.guardarRecordatorio=()=>{
+window.guardarRecordatorio=async()=>{
   const fi=document.getElementById('recFechaInicio').value;
   const ff=document.getElementById('recFechaFin').value||fi;
   const h=document.getElementById('recHora').value;
@@ -1215,7 +1216,7 @@ function renderAccesos(){
 // ── CONTACTOS ──
 let contactos = [];
 
-window.guardarContacto = () => {
+window.guardarContacto = async() => {
   const nombre = document.getElementById('ctaNombre').value.trim();
   if (!nombre) { alert('Ingresa al menos el nombre'); return; }
   const contacto = {
