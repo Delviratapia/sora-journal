@@ -1139,8 +1139,8 @@ function recCard(r,estado){
     '<span class="badge '+(estado==='caducado'?'badge-grave':estado==='completado'?'badge-leve':'badge-moderado')+'">'+(estado==='caducado'?'Caducado':estado==='completado'?'✅ Hecho':'Pendiente')+'</span></div>'+
     '<div style="padding:0 16px 12px;font-size:0.88rem;color:var(--bark);font-weight:500">🔔 '+r.mensaje+'</div>'+
     '<div class="entry-footer">'+
-    (!r.completado?'<button type="button" onclick="completarRecordatorio('+r.id+')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:\'DM Sans\',sans-serif;">✅ Marcar hecho</button>':'<span></span>')+
-    '<button type="button" class="btn-delete" onclick="eliminarRecordatorio('+r.id+')">🗑 Eliminar</button>'+
+    (!r.completado?'<button type="button" onclick="completarRecordatorio(\''+r.id+'\')" style="background:none;border:1.5px solid #ddd5c8;color:var(--moss);font-size:0.72rem;cursor:pointer;padding:4px 10px;border-radius:6px;font-family:\'DM Sans\',sans-serif;">✅ Marcar hecho</button>':'<span></span>')+
+    '<button type="button" class="btn-delete" onclick="eliminarRecordatorio(\''+r.id+'\')">🗑 Eliminar</button>'+
     '</div></div>';
 }
 
@@ -1296,7 +1296,7 @@ window.exportarDatos=()=>{
   URL.revokeObjectURL(url);
 };
 
-window.importarDatos=(input)=>{
+window.importarDatos=async(input)=>{
   const file=input.files[0]; if(!file)return;
   const reader=new FileReader();
   reader.onload=async e=>{
