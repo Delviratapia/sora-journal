@@ -293,7 +293,10 @@ const MEDS_BASE = [
 
 function getCustomMeds() { return JSON.parse(localStorage.getItem('customMeds') || '[]'); }
 function saveCustomMed(n) { const c=getCustomMeds(); if(!c.includes(n)){c.push(n);localStorage.setItem('customMeds',JSON.stringify(c));} }
-function removeCustomMed(n) { const c=getCustomMeds().filter(m=>m!==n); localStorage.setItem('customMeds',JSON.stringify(c)); }
+function removeCustomMed(n) {
+  const c=getCustomMeds().filter(m=>m!==n); localStorage.setItem('customMeds',JSON.stringify(c));
+  const r=getRecentMeds().filter(m=>m!==n); localStorage.setItem('recentMeds',JSON.stringify(r));
+}
 function getAllMeds() { return [...new Set([...MEDS_BASE,...getCustomMeds()])].sort(); }
 function getRecentMeds() { return JSON.parse(localStorage.getItem('recentMeds') || '[]'); }
 function addRecentMed(n) { const r=getRecentMeds().filter(m=>m!==n); r.unshift(n); localStorage.setItem('recentMeds',JSON.stringify(r.slice(0,5))); }
