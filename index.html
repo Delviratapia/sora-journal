@@ -609,16 +609,25 @@ window.quitarMedBloque = (bloqueId) => {
 };
 
 window.eliminarMedPersonal = (nombre, bloqueId) => {
-  if (!confirm('¿Eliminar "' + nombre + '" de tu lista personal?')) return;
+  if (!confirm('¿Eliminar "' + nombre + '" de tu lista personal para siempre?')) return;
   removeCustomMed(nombre);
-  // Refresh bloque to show updated list
-  const container = document.getElementById('bloques');
-  const oldBloque = document.getElementById(bloqueId);
-  if (oldBloque) {
-    medicamentosSeleccionados = medicamentosSeleccionados.filter(m => m.bloqueId !== bloqueId);
-    oldBloque.remove();
-    document.getElementById('btnAddMed').style.display = 'flex';
-    addBloque('medicamento');
+  // Refresh the med list inside the current bloque
+  const list = document.getElementById('medList_' + bloqueId);
+  if (list) {
+    const items = list.querySelectorAll('.med-item, .med-item-section');
+    items.forEach(item => {
+      if (item.textContent.trim() === nombre || 
+          (item.querySelector('span') && item.querySelector('span').textContent.trim() === nombre)) {
+        item.remove();
+      }
+    });
+    // Remove section header if no custom meds left
+    const customMedsLeft = getCustomMeds();
+    if (customMedsLeft.length === 0) {
+      list.querySelectorAll('.med-item-section').forEach(s => {
+        if (s.textContent.trim() === 'Mis medicamentos') s.remove();
+      });
+    }
   }
 };
 
