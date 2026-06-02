@@ -14,8 +14,8 @@
   header p{font-size:0.72rem;color:#a89070;margin-top:2px;}
   .user-bar{font-size:0.7rem;color:#c8a870;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
   .btn-signout{background:none;border:1px solid #c8a870;color:#c8a870;font-size:0.65rem;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-  .tabs{display:flex;background:var(--warm);border-bottom:2px solid #e0d4c0;overflow-x:auto;}
-  .tab{flex:1;min-width:55px;padding:11px 4px;text-align:center;font-size:0.68rem;font-weight:500;color:var(--soft);cursor:pointer;border:none;background:none;transition:all 0.2s;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;}
+  .tabs{display:flex;flex-wrap:wrap;background:var(--warm);border-bottom:2px solid #e0d4c0;}
+  .tab{flex:0 0 25%;padding:10px 4px;text-align:center;font-size:0.68rem;font-weight:500;color:var(--soft);cursor:pointer;border:none;background:none;transition:all 0.2s;border-bottom:3px solid transparent;white-space:nowrap;box-sizing:border-box;}
   .tab.active{color:var(--terra);border-bottom-color:var(--terra);background:var(--cream);}
   .tab-content{display:none;padding:16px;}
   .tab-content.active{display:block;}
@@ -133,6 +133,7 @@
     <button type="button" class="tab" onclick="showTab('resumen',this)">📊 Resumen</button>
     <button type="button" class="tab" onclick="showTab('citas',this)">🏥 Citas</button>
     <button type="button" class="tab" onclick="showTab('recordatorios',this)">🔔 Avisos</button>
+    <button type="button" class="tab" onclick="showTab('contactos',this)">📞 Contactos</button>
     <button type="button" class="tab" onclick="showTab('ajustes',this)">⚙️ Más</button>
   </div>
 
@@ -227,6 +228,24 @@
     <div id="listaRecordatorios"></div>
   </div>
 
+  <div id="contactos" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span>📞</span> Nuevo contacto</div>
+      <div class="row-2">
+        <div><label>Nombre</label><input type="text" id="ctaNombre" placeholder="ej. Dr. Matiz"></div>
+        <div><label>Especialidad</label><input type="text" id="ctaEspecialidad" placeholder="ej. Neurólogo"></div>
+      </div>
+      <label>Teléfono</label>
+      <input type="text" id="ctaTelefono" placeholder="ej. 3158058589" inputmode="tel">
+      <label>WhatsApp <span style="font-size:0.7rem;color:#aaa">(si es diferente)</span></label>
+      <input type="text" id="ctaWhatsapp" placeholder="ej. 3158058589" inputmode="tel">
+      <label>Notas / Recordatorios</label>
+      <textarea id="ctaNotas" placeholder="ej. Preguntarle sobre la dosis, tiene turno los martes..." style="min-height:70px"></textarea>
+      <button type="button" class="btn-primary" onclick="guardarContacto()">💾 Guardar contacto</button>
+    </div>
+    <div id="listaContactos"></div>
+  </div>
+
   <div id="ajustes" class="tab-content">
     <div class="card">
       <div class="card-title"><span>👥</span> Compartir mis datos</div>
@@ -237,6 +256,12 @@
       </div>
       <div id="listaAccesos"></div>
     </div>
+    <div class="card">
+      <div class="card-title"><span>💊</span> Medicamentos recientes</div>
+      <p style="font-size:0.82rem;color:var(--soft);margin-bottom:12px;line-height:1.6">Limpia la lista de medicamentos usados recientemente.</p>
+      <button type="button" onclick="limpiarRecientes()" style="width:100%;padding:12px;background:white;color:var(--danger);border:1.5px solid #fde8e8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;">🗑 Limpiar medicamentos recientes</button>
+    </div>
+
     <div class="card">
       <div class="card-title"><span>💾</span> Respaldo</div>
       <button type="button" class="btn-primary" onclick="exportarDatos()" style="margin-bottom:10px">📤 Exportar respaldo</button>
@@ -279,9 +304,12 @@ let currentPhotos = [], selectedSymptoms = [], selectedSev = '', symptomDetails 
 let medicamentosSeleccionados = [];
 let activeFilter = 'todos', activeRecFilter = 'todos';
 let editingEntryId = null;
-let recordatorios = JSON.parse(localStorage.getItem('soraRecordatorios') || '[]');
+let recordatorios = [];
 
 // ── MEDICATIONS ──
+let customMedsCache = [];
+let recentMedsCache = [];
+
 const MEDS_BASE = [
   'Amoxicilina','Atenolol','Azatioprina','Cefadroxilo','Ciclosporina',
   'Clindamicina','Dexametasona','Enalapril','Enrofloxacina','Espirolactona',
@@ -291,15 +319,29 @@ const MEDS_BASE = [
   'Previcox (Firocoxib)','Tramadol'
 ];
 
-function getCustomMeds() { return JSON.parse(localStorage.getItem('customMeds') || '[]'); }
-function saveCustomMed(n) { const c=getCustomMeds(); if(!c.includes(n)){c.push(n);localStorage.setItem('customMeds',JSON.stringify(c));} }
-function removeCustomMed(n) {
-  const c=getCustomMeds().filter(m=>m!==n); localStorage.setItem('customMeds',JSON.stringify(c));
-  const r=getRecentMeds().filter(m=>m!==n); localStorage.setItem('recentMeds',JSON.stringify(r));
+function getCustomMeds() { return customMedsCache; }
+async function saveCustomMed(n) {
+  if(!customMedsCache.includes(n)){
+    customMedsCache.push(n);
+    try { await setDoc(doc(db,'users',currentUser.uid,'config','customMeds'),{lista:customMedsCache}); } catch(e){console.error(e);}
+  }
+}
+async function removeCustomMed(n) {
+  customMedsCache = customMedsCache.filter(m=>m!==n);
+  recentMedsCache = recentMedsCache.filter(m=>m!==n);
+  try {
+    await setDoc(doc(db,'users',currentUser.uid,'config','customMeds'),{lista:customMedsCache});
+    await setDoc(doc(db,'users',currentUser.uid,'config','recentMeds'),{lista:recentMedsCache});
+  } catch(e){console.error(e);}
 }
 function getAllMeds() { return [...new Set([...MEDS_BASE,...getCustomMeds()])].sort(); }
-function getRecentMeds() { return JSON.parse(localStorage.getItem('recentMeds') || '[]'); }
-function addRecentMed(n) { const r=getRecentMeds().filter(m=>m!==n); r.unshift(n); localStorage.setItem('recentMeds',JSON.stringify(r.slice(0,5))); }
+function getRecentMeds() { return recentMedsCache; }
+async function addRecentMed(n) {
+  recentMedsCache = recentMedsCache.filter(m=>m!==n);
+  recentMedsCache.unshift(n);
+  recentMedsCache = recentMedsCache.slice(0,5);
+  try { await setDoc(doc(db,'users',currentUser.uid,'config','recentMeds'),{lista:recentMedsCache}); } catch(e){console.error(e);}
+}
 
 // ── CONTRAINDICATIONS ──
 const CONTRAINDS = [
@@ -360,6 +402,18 @@ async function cargarDatos() {
     entries = es.docs.map(d=>({...d.data(),_id:d.id}));
     const cs = await getDocs(query(collection(db,'users',ownerUid,'citas'),orderBy('fecha','asc')));
     citas = cs.docs.map(d=>({...d.data(),_id:d.id}));
+    // Only load personal data for owner
+    if (ownerUid === (currentUser?.uid||ownerUid)) {
+      const rs = await getDocs(query(collection(db,'users',ownerUid,'recordatorios'),orderBy('fecha','asc')));
+      recordatorios = rs.docs.map(d=>({...d.data(),id:d.id}));
+      const cons = await getDocs(collection(db,'users',ownerUid,'contactos'));
+      contactos = cons.docs.map(d=>({...d.data(),id:d.id}));
+    }
+    // Load med preferences (always from owner's own account)
+    const cmDoc = await getDoc(doc(db,'users',currentUser.uid,'config','customMeds'));
+    customMedsCache = cmDoc.exists() ? (cmDoc.data().lista||[]) : [];
+    const rmDoc = await getDoc(doc(db,'users',currentUser.uid,'config','recentMeds'));
+    recentMedsCache = rmDoc.exists() ? (rmDoc.data().lista||[]) : [];
   } catch(e) { console.error(e); }
 }
 
@@ -1015,7 +1069,15 @@ window.guardarRecordatorio=()=>{
       recordatorios.push({id:Date.now()+i,fecha,hora:h,mensaje:m,completado:false});
   }
   recordatorios.sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
-  localStorage.setItem('soraRecordatorios',JSON.stringify(recordatorios));
+  // Save new ones to Firebase
+  try {
+    for (const r of recordatorios.filter(x=>!x._saved)) {
+      const ref = await addDoc(collection(db,'users',currentUser.uid,'recordatorios'), {
+        fecha:r.fecha, hora:r.hora, mensaje:r.mensaje, completado:false
+      });
+      r.id = ref.id; r._saved = true;
+    }
+  } catch(e) { console.error(e); }
   ['recFechaInicio','recFechaFin','recHora','recMensaje'].forEach(id=>document.getElementById(id).value='');
   renderRecordatorios(); checkRecordatoriosBanner();
   const btn=document.querySelector('#recordatorios .btn-primary');
@@ -1075,8 +1137,17 @@ function recCard(r,estado){
     '</div></div>';
 }
 
-window.completarRecordatorio=(id)=>{recordatorios=recordatorios.map(r=>r.id===id?{...r,completado:true}:r);localStorage.setItem('soraRecordatorios',JSON.stringify(recordatorios));renderRecordatorios();checkRecordatoriosBanner();};
-window.eliminarRecordatorio=(id)=>{if(!confirm('¿Eliminar?'))return;recordatorios=recordatorios.filter(r=>r.id!==id);localStorage.setItem('soraRecordatorios',JSON.stringify(recordatorios));renderRecordatorios();checkRecordatoriosBanner();};
+window.completarRecordatorio=async(id)=>{
+  recordatorios=recordatorios.map(r=>r.id===id?{...r,completado:true}:r);
+  try { await updateDoc(doc(db,'users',currentUser.uid,'recordatorios',id),{completado:true}); } catch(e){console.error(e);}
+  renderRecordatorios(); checkRecordatoriosBanner();
+};
+window.eliminarRecordatorio=async(id)=>{
+  if(!confirm('¿Eliminar?'))return;
+  recordatorios=recordatorios.filter(r=>r.id!==id);
+  try { await deleteDoc(doc(db,'users',currentUser.uid,'recordatorios',id)); } catch(e){console.error(e);}
+  renderRecordatorios(); checkRecordatoriosBanner();
+};
 
 // ── BANNERS ──
 function checkRiskBanner(){
@@ -1141,6 +1212,75 @@ function renderAccesos(){
     accesos.map(e=>'<div class="correo-tag"><span>👁️ '+e+'</span><button onclick="quitarAcceso(\''+e+'\')">✕</button></div>').join('');
 }
 
+// ── CONTACTOS ──
+let contactos = [];
+
+window.guardarContacto = () => {
+  const nombre = document.getElementById('ctaNombre').value.trim();
+  if (!nombre) { alert('Ingresa al menos el nombre'); return; }
+  const contacto = {
+    id: Date.now(),
+    nombre,
+    especialidad: document.getElementById('ctaEspecialidad').value.trim(),
+    telefono: document.getElementById('ctaTelefono').value.trim(),
+    whatsapp: document.getElementById('ctaWhatsapp').value.trim(),
+    notas: document.getElementById('ctaNotas').value.trim()
+  };
+  try {
+    const ref = await addDoc(collection(db,'users',currentUser.uid,'contactos'), contacto);
+    contacto.id = ref.id;
+  } catch(e) { console.error(e); }
+  contactos.push(contacto);
+  ['ctaNombre','ctaEspecialidad','ctaTelefono','ctaWhatsapp','ctaNotas'].forEach(id => document.getElementById(id).value = '');
+  renderContactos();
+  const btn = document.querySelector('#contactos .btn-primary');
+  btn.textContent = '✅ ¡Guardado!'; btn.style.background = '#4a6741';
+  setTimeout(() => { btn.textContent = '💾 Guardar contacto'; btn.style.background = ''; }, 2000);
+};
+
+function renderContactos() {
+  const container = document.getElementById('listaContactos');
+  if (!container) return;
+  if (contactos.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📞</div><p>No hay contactos guardados.</p></div>';
+    return;
+  }
+  container.innerHTML = contactos.map(c => {
+    const tel = c.telefono || c.whatsapp;
+    const wa = c.whatsapp || c.telefono;
+    return '<div class="entry-card">' +
+      '<div class="entry-header">' +
+        '<div>' +
+          '<div class="entry-date">' + c.nombre + '</div>' +
+          '<div class="entry-time">' + (c.especialidad || '') + '</div>' +
+        '</div>' +
+      '</div>' +
+      (c.telefono ? '<div style="padding:0 16px 8px;font-size:0.82rem;color:var(--soft)">📱 ' + c.telefono + '</div>' : '') +
+      (c.notas ? '<div class="entry-notes">"' + c.notas + '"</div>' : '') +
+      '<div class="entry-footer">' +
+        '<div style="display:flex;gap:8px">' +
+          (tel ? '<a href="tel:' + tel + '" style="padding:6px 12px;background:var(--moss);color:white;border-radius:8px;font-size:0.78rem;text-decoration:none;font-family:'DM Sans',sans-serif">📞 Llamar</a>' : '') +
+          (wa ? '<a href="https://wa.me/' + wa.replace(/\D/g,'') + '" target="_blank" style="padding:6px 12px;background:#25D366;color:white;border-radius:8px;font-size:0.78rem;text-decoration:none;font-family:'DM Sans',sans-serif">💬 WhatsApp</a>' : '') +
+        '</div>' +
+        '<button type="button" class="btn-delete" onclick="eliminarContacto(' + c.id + ')">🗑</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+window.eliminarContacto = async(id) => {
+  if (!confirm('¿Eliminar este contacto?')) return;
+  contactos = contactos.filter(c => c.id !== id);
+  try { await deleteDoc(doc(db,'users',currentUser.uid,'contactos',id)); } catch(e){console.error(e);}
+  renderContactos();
+};
+
+window.limpiarRecientes=async()=>{
+  if(!confirm('¿Limpiar la lista de medicamentos recientes?'))return;
+  recentMedsCache=[];
+  try { await setDoc(doc(db,'users',currentUser.uid,'config','recentMeds'),{lista:[]}); } catch(e){console.error(e);}
+  alert('✅ Lista de recientes limpiada');
+};
+
 window.exportarDatos=()=>{
   const data=JSON.stringify({entries,citas},null,2);
   const blob=new Blob([data],{type:'application/json'});
@@ -1172,6 +1312,7 @@ window.showTab=(tab,btn)=>{
   if(tab==='resumen')renderResumen();
   if(tab==='citas')renderCitas();
   if(tab==='ajustes'&&isOwner)renderAccesos();
+  if(tab==='contactos')renderContactos();
   if(tab==='recordatorios')renderRecordatorios();
 };
 
