@@ -397,25 +397,37 @@ async function resolverAcceso() {
 }
 
 async function cargarDatos() {
+  // Each call is independent - one failure won't block others
   try {
     const es = await getDocs(query(collection(db,'users',ownerUid,'entries'),orderBy('fecha','desc')));
     entries = es.docs.map(d=>({...d.data(),_id:d.id}));
+  } catch(e) { console.error('entries:', e); entries = []; }
+
+  try {
     const cs = await getDocs(query(collection(db,'users',ownerUid,'citas'),orderBy('fecha','asc')));
     citas = cs.docs.map(d=>({...d.data(),_id:d.id}));
-    // Only load personal data for owner
-    if (ownerUid === (currentUser?.uid||ownerUid)) {
-      const rs = await getDocs(collection(db,'users',ownerUid,'recordatorios'));
-      recordatorios = rs.docs.map(d=>({...d.data(),id:d.id}));
-      recordatorios.sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
-      const cons = await getDocs(collection(db,'users',ownerUid,'contactos'));
-      contactos = cons.docs.map(d=>({...d.data(),id:d.id}));
-    }
-    // Load med preferences (always from owner's own account)
+  } catch(e) { console.error('citas:', e); citas = []; }
+
+  try {
+    const rs = await getDocs(collection(db,'users',ownerUid,'recordatorios'));
+    recordatorios = rs.docs.map(d=>({...d.data(),id:d.id}));
+    recordatorios.sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+  } catch(e) { console.error('recordatorios:', e); recordatorios = []; }
+
+  try {
+    const cons = await getDocs(collection(db,'users',ownerUid,'contactos'));
+    contactos = cons.docs.map(d=>({...d.data(),id:d.id}));
+  } catch(e) { console.error('contactos:', e); contactos = []; }
+
+  try {
     const cmDoc = await getDoc(doc(db,'users',currentUser.uid,'config','customMeds'));
     customMedsCache = cmDoc.exists() ? (cmDoc.data().lista||[]) : [];
+  } catch(e) { console.error('customMeds:', e); customMedsCache = []; }
+
+  try {
     const rmDoc = await getDoc(doc(db,'users',currentUser.uid,'config','recentMeds'));
     recentMedsCache = rmDoc.exists() ? (rmDoc.data().lista||[]) : [];
-  } catch(e) { console.error(e); }
+  } catch(e) { console.error('recentMeds:', e); recentMedsCache = []; }
 }
 
 async function cargarAccesos() {
@@ -1260,8 +1272,8 @@ function renderContactos() {
       (c.notas ? '<div class="entry-notes">"' + c.notas + '"</div>' : '') +
       '<div class="entry-footer">' +
         '<div style="display:flex;gap:8px">' +
-          (tel ? '<a href="tel:' + tel + '" style="padding:6px 12px;background:var(--moss);color:white;border-radius:8px;font-size:0.78rem;text-decoration:none;font-family:'DM Sans',sans-serif">📞 Llamar</a>' : '') +
-          (wa ? '<a href="https://wa.me/' + wa.replace(/\D/g,'') + '" target="_blank" style="padding:6px 12px;background:#25D366;color:white;border-radius:8px;font-size:0.78rem;text-decoration:none;font-family:'DM Sans',sans-serif">💬 WhatsApp</a>' : '') +
+          (tel ? '<a href="tel:' + tel + '" style="padding:6px 12px;background:var(--moss);color:white;border-radius:8px;font-size:0.78rem;text-decoration:none">📞 Llamar</a>' : '') +
+          (wa ? '<a href="https://wa.me/' + wa.replace(/[^0-9]/g,'') + '" target="_blank" style="padding:6px 12px;background:#25D366;color:white;border-radius:8px;font-size:0.78rem;text-decoration:none">💬 WhatsApp</a>' : '') +
         '</div>' +
         '<button type="button" class="btn-delete" onclick="eliminarContacto(' + c.id + ')">🗑</button>' +
       '</div></div>';
