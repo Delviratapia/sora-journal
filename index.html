@@ -574,7 +574,10 @@ window.selectMed = (med, bloqueId) => {
   const container = document.getElementById('medSel_' + bloqueId);
   if (!container) return;
   container.innerHTML = `
-    <div class="med-selected">💊 ${med}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--light-moss);padding:8px 12px;border-radius:10px;margin-bottom:8px">
+      <span style="font-size:0.82rem;font-weight:500;color:var(--bark)">💊 ${med}</span>
+      <button type="button" onclick="quitarMedBloque('${bloqueId}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.9rem;padding:0 4px">✕</button>
+    </div>
     <div class="row-3" style="margin-bottom:0">
       <div style="grid-column:span 2">
         <label>Dosis</label>
@@ -593,11 +596,27 @@ window.selectMed = (med, bloqueId) => {
   checkContraindications();
 };
 
+window.quitarMedBloque = (bloqueId) => {
+  // Just clear the selected med from this bloque without removing the bloque
+  medicamentosSeleccionados = medicamentosSeleccionados.filter(m => m.bloqueId !== bloqueId);
+  const c = document.getElementById('medSel_' + bloqueId);
+  if (c) c.innerHTML = '';
+  const searchInput = document.querySelector('#blk_medicamento_' + bloqueId.split('_')[3] + ' input[type="text"]');
+  checkContraindications();
+};
+
 window.eliminarMedPersonal = (nombre, bloqueId) => {
   if (!confirm('¿Eliminar "' + nombre + '" de tu lista personal?')) return;
   removeCustomMed(nombre);
-  removeBloque(bloqueId, 'medicamento');
-  addBloque('medicamento');
+  // Refresh bloque to show updated list
+  const container = document.getElementById('bloques');
+  const oldBloque = document.getElementById(bloqueId);
+  if (oldBloque) {
+    medicamentosSeleccionados = medicamentosSeleccionados.filter(m => m.bloqueId !== bloqueId);
+    oldBloque.remove();
+    document.getElementById('btnAddMed').style.display = 'flex';
+    addBloque('medicamento');
+  }
 };
 
 function checkContraindications() {
